@@ -25,6 +25,31 @@
                 </tr>
             </xpath>
         </template>
+
+        <template id="arabic_english_invoice_inherit_retention" inherit_id="l10n_gcc_invoice.arabic_english_invoice">
+            <!--            <xpath expr="//table[@class='table table-sm table-borderless'][1]/t[2]" position="before">-->
+            <!--            </xpath>-->
+            <xpath expr="//table[@class='table table-sm'][1]/tr[@class='border-black o_total'][1]" position="after">
+                <tr class="border-black o_subtotal" t-if="o.show_retention">
+                    <td>
+                        <strong>Retention Amount / المقدار المحجوز</strong>
+                    </td>
+                    <td class="text-end">
+                        <span t-field="o.retention_amount"/>
+                        <span>SR</span>
+                    </td>
+                </tr>
+                <tr class="border-black o_subtotal" t-if="o.show_retention">
+                    <td>
+                        <strong>Total Without Retention / المقدار الكلي بدون المحجوز</strong>
+                    </td>
+                    <td class="text-end">
+                        <span t-field="o.total_without_retention"/>
+                        <span>SR</span>
+                    </td>
+                </tr>
+            </xpath>
+        </template>
     </data>
 </odoo>
 

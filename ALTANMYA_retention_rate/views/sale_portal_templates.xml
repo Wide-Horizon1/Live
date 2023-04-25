@@ -10,8 +10,8 @@
                         <strong>Retention Amount</strong>
                     </td>
                     <td class="text-end">
-                        <span>$</span>
                         <span t-field="sale_order.retention_amount"/>
+                        <span>SR</span>
                     </td>
                 </tr>
                 <tr class="border-black o_subtotal" t-if="sale_order.show_retention">
@@ -19,8 +19,8 @@
                         <strong>Total Without Retention</strong>
                     </td>
                     <td class="text-end">
-                        <span>$</span>
                         <span t-field="sale_order.total_without_retention"/>
+                        <span>SR</span>
                     </td>
                 </tr>
             </xpath>

@@ -24,7 +24,7 @@
     'author': 'ALTANMYA - TECHNOLOGY SOLUTIONS',
     'company': 'ALTANMYA - TECHNOLOGY SOLUTIONS Part of ALTANMYA GROUP',
     'website': "https://tech.altanmya.net",
-    'depends': ['account', 'sale'],
+    'depends': ['account', 'sale', 'l10n_gcc_invoice'],
     'data': [
         'views/sale_order_views.xml',
         'views/sale_portal_templates.xml',
