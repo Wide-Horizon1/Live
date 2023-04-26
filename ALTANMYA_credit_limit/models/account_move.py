@@ -15,62 +15,73 @@ class AccountMove(models.Model):
         moves = super().create([self._sanitize_vals(vals) for vals in vals_list])
         partner = moves.partner_id.commercial_partner_id
         moves.compute_partner_late_payment()
-        print('anas')
+        if partner.include_companies:
+            partner_credit = partner.c_credit
+        else:
+            partner_credit = partner.credit
+        print('move type ', moves.move_type)
+        print('new credit ', partner.c_credit)
+        print('old credit ', partner.credit)
         save = False
-        try:
-            print('pa', partner.c_use_partner_credit_limit)
-            if partner.c_use_partner_credit_limit:
-                print(partner.c_credit_limit, partner.credit, moves.amount_total)
-                print('partner.credit ', partner.credit)
-                if partner.c_credit_limit < partner.credit + moves.amount_total:
+        if moves.move_type == 'out_invoice':
+            try:
+                print('pa', partner.c_use_partner_credit_limit)
+                if partner.c_use_partner_credit_limit:
+                    print(partner.c_credit_limit, partner.credit, moves.amount_total)
+                    print('partner.credit ', partner.credit)
+                    if partner.c_credit_limit < partner_credit + moves.amount_total:
+                        if partner.action_type == 'nothing':
+                            pass
+                        elif partner.action_type == 'block':
+                            print('partner company id', partner.company_id.id)
+                            print('move company id', moves.company_id.id)
+                            # if not partner.include_companies and moves.company_id.id == self.env.company.id:
+                            print('ll')
+                            save = True
+                            raise UserError(
+                                f'{partner.name} has reached its Credit Limit of : {partner.c_credit_limit}')
+                            # elif partner.include_companies:
+                            #     save = True
+                            #     raise UserError(
+                            #         f'{partner.name} has reached its Credit Limit of : {partner.c_credit_limit}')
+            finally:
+                print('fina move 2', save)
+                if save:
+                    amount_total = moves.amount_total
+                    self.env.cr.rollback()
+                    self.create_prevention_log_rec(partner,
+                                                   'the customer has reached his Credit Limit', amount_total)
+
+            try:
+                if moves.compute_partner_late_payment():
                     if partner.action_type == 'nothing':
                         pass
                     elif partner.action_type == 'block':
-                        print('partner company id',  partner.company_id.id)
-                        print('move company id',  moves.company_id.id)
-                        # if not partner.include_companies and moves.company_id.id == self.env.company.id:
-                        print('ll')
+                        print('mm')
                         save = True
                         raise UserError(
-                            f'{partner.name} has reached its Credit Limit of : {partner.c_credit_limit}')
-                        # elif partner.include_companies:
-                        #     save = True
-                        #     raise UserError(
-                        #         f'{partner.name} has reached its Credit Limit of : {partner.c_credit_limit}')
-        finally:
-            print('fina move 2', save)
-            if save:
-                amount_total = moves.amount_total
-                self.env.cr.rollback()
-                self.create_prevention_log_rec(partner,
-                                               'the customer has reached his Credit Limit', amount_total)
-
-        try:
-            if moves.compute_partner_late_payment():
-                if partner.action_type == 'nothing':
-                    pass
-                elif partner.action_type == 'block':
-                    print('mm')
-                    save = True
-                    raise UserError(
-                        f'{partner.name} has unpaid invoices and the payment deadline is over')
-        finally:
-            print('fina move', save)
-            if save:
-                amount_total = moves.amount_total
-                self.env.cr.rollback()
-                self.create_prevention_log_rec(partner,
-                                               'the customer has unpaid invoices and the payment deadline is over',
-                                               amount_total)
+                            f'{partner.name} has unpaid invoices and the payment deadline is over')
+            finally:
+                print('fina move', save)
+                if save:
+                    amount_total = moves.amount_total
+                    self.env.cr.rollback()
+                    self.create_prevention_log_rec(partner,
+                                                   'the customer has unpaid invoices and the payment deadline is over',
+                                                   amount_total)
         return moves
 
     def action_post(self):
         moves_with_payments = self.filtered('payment_id')
         other_moves = self - moves_with_payments
         partner = self.partner_id.commercial_partner_id
+        if partner.include_companies:
+            partner_credit = partner.c_credit
+        else:
+            partner_credit = partner.credit
         if partner.c_use_partner_credit_limit:
             print(partner.c_credit_limit, partner.credit, self.amount_total)
-            if partner.c_credit_limit < partner.credit + self.amount_total:
+            if partner.c_credit_limit < partner_credit + self.amount_total:
                 print('partner.c_credit_limit : ', partner.c_credit_limit)
                 print('partner.credit : ', partner.credit)
                 print('amount_total : ', self.amount_total)
@@ -155,13 +166,11 @@ class AccountMove(models.Model):
             WHERE partner_id = {self.partner_id.id}
             AND invoice_date_due < '{fields.Datetime.now() - datetime.timedelta(
                 days=self.partner_id.commercial_partner_id.number_of_allowed_late_days)}'
+            AND move_type = 'out_invoice'
             AND state = 'posted'
+            AND payment_state = 'not_paid'
             AND id != {move_id}
             """
-            domain = [('partner_id', '=', self.partner_id.id),
-                      ('invoice_date_due', '<', fields.Datetime.now() - datetime.timedelta(
-                          days=self.partner_id.commercial_partner_id.number_of_allowed_late_days)),
-                      ('state', '=', 'posted'), ('id', '!=', move_id)]
         else:
             query = f"""
                         SELECT id
@@ -169,17 +178,14 @@ class AccountMove(models.Model):
                         WHERE partner_id = {self.partner_id.id}
                         AND invoice_date_due < '{fields.Datetime.now() - datetime.timedelta(
                 days=self.partner_id.commercial_partner_id.number_of_allowed_late_days)}'
+                        AND move_type = 'out_invoice'
                         AND state = 'posted'
+                        AND payment_state = 'not_paid'
                         AND id != {move_id}
                         AND company_id = {self.company_id.id}
                         """
-            domain = [('partner_id', '=', self.partner_id.id),
-                      ('invoice_date_due', '<', fields.Datetime.now() - datetime.timedelta(
-                          days=self.partner_id.commercial_partner_id.number_of_allowed_late_days)),
-                      ('state', '=', 'posted'), ('id', '!=', move_id), ('company_id', '=', self.company_id.id)]
         if self.partner_id:
             print('all invoices', self.env['account.move'].search([('company_id', '!=', None)]))
-            # late_invoices = self.env['account.move'].search(domain)
             self.env.cr.execute(query)
             late_invoices = self.env.cr.fetchall()
             print('late invoices "move" : ', late_invoices)
@@ -196,10 +202,14 @@ class AccountMove(models.Model):
             show_warning = move.state == 'draft' and \
                            move.move_type == 'out_invoice' and \
                            move.company_id.account_use_credit_limit
-            if self.partner_id.action_type == 'warning':
+            if self.partner_id.action_type == 'warning' and self.move_type == 'out_invoice':
                 amount_total_currency = move.currency_id._convert(move.tax_totals['amount_total'],
                                                                   move.company_currency_id, move.company_id, move.date)
-                updated_credit = move.partner_id.commercial_partner_id.credit + amount_total_currency
+                if self.partner_id.commercial_partner_id.include_companies:
+                    partner_credit = move.partner_id.commercial_partner_id.c_credit
+                else:
+                    partner_credit = move.partner_id.commercial_partner_id.credit
+                updated_credit = partner_credit + amount_total_currency
                 move.partner_credit_warning = self._build_credit_warning_message(move, updated_credit)
 
     def create_prevention_log_rec(self, partner, reason, amount):

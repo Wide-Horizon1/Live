@@ -99,12 +99,10 @@ class SaleOrder(models.Model):
             WHERE partner_id = {self.partner_id.id}
             AND invoice_date_due < '{fields.Datetime.now() - datetime.timedelta(
                 days=self.partner_id.commercial_partner_id.number_of_allowed_late_days)}'
+            AND move_type = 'out_invoice'
             AND state = 'posted'
+            AND payment_state = 'not_paid'
             """
-            # domain = [('partner_id', '=', self.partner_id.id),
-            #           ('invoice_date_due', '<', fields.Datetime.now() - datetime.timedelta(
-            #               days=self.partner_id.commercial_partner_id.number_of_allowed_late_days)),
-            #           ('state', '=', 'posted'), ('id', '!=', move_id)]
         else:
             query = f"""
                         SELECT id
@@ -112,13 +110,11 @@ class SaleOrder(models.Model):
                         WHERE partner_id = {self.partner_id.id}
                         AND invoice_date_due < '{fields.Datetime.now() - datetime.timedelta(
                 days=self.partner_id.commercial_partner_id.number_of_allowed_late_days)}'
+                        AND move_type = 'out_invoice'
                         AND state = 'posted'
+                        AND payment_state = 'not_paid'
                         AND company_id = {self.company_id.id}
                         """
-            # domain = [('partner_id', '=', self.partner_id.id),
-            #           ('invoice_date_due', '<', fields.Datetime.now() - datetime.timedelta(
-            #               days=self.partner_id.commercial_partner_id.number_of_allowed_late_days)),
-            #           ('state', '=', 'posted'), ('id', '!=', move_id), ('company_id', '=', self.company_id.id)]
         if self.partner_id:
             print('all invoices', self.env['account.move'].search([('company_id', '!=', None)]))
             # late_invoices = self.env['account.move'].search(domain)
@@ -157,7 +153,11 @@ class SaleOrder(models.Model):
             show_warning = order.state in ('draft', 'sent') and \
                            order.company_id.account_use_credit_limit
             if self.partner_id.action_type == 'warning':
-                updated_credit = order.partner_id.commercial_partner_id.credit + (
+                if self.partner_id.commercial_partner_id.include_companies:
+                    partner_credit = order.partner_id.commercial_partner_id.c_credit
+                else:
+                    partner_credit = order.partner_id.commercial_partner_id.credit
+                updated_credit = partner_credit + (
                         order.amount_total * order.currency_rate)
                 order.partner_credit_warning = self.env['account.move']._build_credit_warning_message(
                     order, updated_credit)
