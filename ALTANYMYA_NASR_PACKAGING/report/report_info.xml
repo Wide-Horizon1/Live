@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="job_ticket_report" model="ir.actions.report">
+        <field name="name">Job Ticket</field>
+        <field name="model">mrp.production</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ALTANYMYA_NASR_PACKAGING.nasr_report_id</field>
+        <field name="report_file">ALTANYMYA_NASR_PACKAGING.nasr_report_id</field>
+        <field name="binding_model_id" ref="model_mrp_production"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="mic_pallet_report" model="ir.actions.report">
+        <field name="name">MIC-Pallet</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ALTANYMYA_NASR_PACKAGING.nasr_report_mic_pallet_id</field>
+        <field name="report_file">ALTANYMYA_NASR_PACKAGING.nasr_report_mic_pallet_id</field>
+        <field name="binding_model_id" ref="model_stock_picking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="standard_half_page_pallet_report" model="ir.actions.report">
+        <field name="name">Standard Half Page</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ALTANYMYA_NASR_PACKAGING.nasr_report_standard_half_page_pallet_id</field>
+        <field name="report_file">ALTANYMYA_NASR_PACKAGING.nasr_report_standard_half_page_pallet_id</field>
+        <field name="binding_model_id" ref="model_stock_picking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="standard_small_page_pallet_report" model="ir.actions.report">
+        <field name="name">Standard Small Page</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ALTANYMYA_NASR_PACKAGING.nasr_report_standard_small_page_pallet_id</field>
+        <field name="report_file">ALTANYMYA_NASR_PACKAGING.nasr_report_standard_small_page_pallet_id</field>
+        <field name="binding_model_id" ref="model_stock_picking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="order_confirmation_report" model="ir.actions.report">
+        <field name="name">Order Confirmation</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ALTANYMYA_NASR_PACKAGING.nasr_report_order_confirmation_id</field>
+        <field name="report_file">ALTANYMYA_NASR_PACKAGING.nasr_report_order_confirmation_id</field>
+        <field name="binding_model_id" ref="model_sale_order"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

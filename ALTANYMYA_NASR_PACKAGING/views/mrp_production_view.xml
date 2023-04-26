@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mrp_production_inherited" model="ir.ui.view">
+        <field name="name">mrp.production.inherited</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <field name="components_availability" position="before">
+                <field name="schedule_date_mrp" attrs="{'invisible':[('hide', '=', True)]}"/>
+            </field>
+            <xpath expr="//page[4]/group[1]/group[1]" position="before">
+                <group>
+                    <field name="sale_order_id"/>
+                    <field name="sale_order_line_id" attrs="{'invisible':[('hide', '=', True)]}"/>
+                    <field name="lead_days" invisible="1"/>
+                    <field name="hide" invisible="1"/>
+                    <field name="sale_order_partner_id" attrs="{'invisible':[('hide', '=', True)]}"/>
+                    <field name="sale_order_client_order_ref" attrs="{'invisible':[('hide', '=', True)]}"/>
+                    <field name="delivery_date" attrs="{'invisible':[('hide', '=', True)]}"/>
+                    <field name="color_quality"/>
+                    <field name="board_gsm"/>
+                    <field name="sheet_size"/>
+                    <field name="cut_size"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_mrp_production_tree_inherited" model="ir.ui.view">
+        <field name="name">mrp.production.tree.inherited</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="schedule_date_mrp" widget="remaining_days"/>
+            </field>
+        </field>
+    </record>
+</odoo>

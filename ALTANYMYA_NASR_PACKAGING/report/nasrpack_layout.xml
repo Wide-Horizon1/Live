@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <template id="nasrpack_external_layout_standard">
+            <div class="header">
+                <div class="row" style="report_header_style">
+                    <span>
+                        <img style="width: 100%;" t-if="docs.company_id.logo"
+                             t-att-src="image_data_uri(docs.company_id.logo)" alt="Logo"/>
+                    </span>
+                </div>
+            </div>
+            <div class="article o_report_layout_standard">
+                <t t-out="0"/>
+            </div>
+            <!--            <div class="footer o_standard_footer">-->
+            <!--                <div class="row" style="report_header_style">-->
+            <!--                </div>-->
+            <!--            </div>-->
+        </template>
+    </data>
+</odoo>
