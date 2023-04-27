@@ -33,6 +33,6 @@ class SaleOrderLineNasr(models.Model):
         for rec in self:
             sale_order_id = self.env['sale.order'].search([('id', '=', rec.order_id.id)])
             if sale_order_id.commitment_date:
-                if rec.delivery_date_sale_order_line > sale_order_id.commitment_date:
+                if rec.delivery_date_sale_order_line >= sale_order_id.commitment_date:
                     raise ValidationError(
                         _('Delivery Date for each line must be less than the Sale Order Delivery Date'))

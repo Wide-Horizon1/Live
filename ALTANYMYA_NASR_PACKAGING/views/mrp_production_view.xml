@@ -16,12 +16,34 @@
                     <field name="hide" invisible="1"/>
                     <field name="sale_order_partner_id" attrs="{'invisible':[('hide', '=', True)]}"/>
                     <field name="sale_order_client_order_ref" attrs="{'invisible':[('hide', '=', True)]}"/>
-                    <field name="delivery_date" attrs="{'invisible':[('hide', '=', True)]}"/>
+                    <field name="delivery_date" invisible="1"/>
                     <field name="color_quality"/>
                     <field name="board_gsm"/>
                     <field name="sheet_size"/>
                     <field name="cut_size"/>
                 </group>
+            </xpath>
+            <xpath expr="//page[4]" position="after">
+                <page string="Shift Production" name="shift_production_page">
+                    <field name="shift_production_lines">
+                        <tree editable="bottom">
+                            <field name="sequence"/>
+                            <field name="shift"/>
+                            <field name="job_ticket"/>
+                            <field name="finished_product"/>
+                            <field name="operation"/>
+                            <field name="operator"/>
+                            <field name="date"/>
+                            <field name="duration_from"/>
+                            <field name="duration_to"/>
+                            <field name="duration"/>
+                            <field name="job_ticket_qty" invisible="1"/>
+                            <field name="quantity_done"/>
+                            <field name="outs"/>
+                            <field name="sheets_done"/>
+                        </tree>
+                    </field>
+                </page>
             </xpath>
         </field>
     </record>

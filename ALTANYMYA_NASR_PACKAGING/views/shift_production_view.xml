@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.actions.act_window" id="action_shift_production">
+        <field name="name">Shift Production</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">shift.production</field>
+        <field name="view_mode">tree,pivot,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                To create a new shift production order, click on the "Create" button.
+            </p>
+        </field>
+    </record>
+
+    <record id="shift_production_form" model="ir.ui.view">
+        <field name="name">shift.production.form</field>
+        <field name="model">shift.production</field>
+        <field name="arch" type="xml">
+            <form string="Shift Production" version="7.0">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="sequence"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="shift"/>
+                            <field name="job_ticket"/>
+                            <field name="finished_product"/>
+                            <field name="operation"/>
+                            <field name="operator"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="duration_from"/>
+                            <field name="duration_to"/>
+                            <field name="duration"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="quantity_done"/>
+                        <field name="outs"/>
+                        <field name="sheets_done"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="shift_production_tree" model="ir.ui.view">
+        <field name="name">shift.production.tree</field>
+        <field name="model">shift.production</field>
+        <field name="arch" type="xml">
+            <tree string="Shift Productions" editable="top" sample="1" expand="1">
+                <field name="sequence"/>
+                <field name="shift"/>
+                <field name="job_ticket"/>
+                <field name="finished_product"/>
+                <field name="operation"/>
+                <field name="operator"/>
+                <field name="date"/>
+                <field name="duration_from"/>
+                <field name="duration_to"/>
+                <field name="duration"/>
+                <field name="job_ticket_qty" invisible="1"/>
+                <field name="quantity_done"/>
+                <field name="outs"/>
+                <field name="sheets_done"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="shift_production_pivot" model="ir.ui.view">
+        <field name="name">shift.production.pivot</field>
+        <field name="model">shift.production</field>
+        <field name="arch" type="xml">
+            <pivot string="Pipeline Analysis" sample="1"/>
+        </field>
+    </record>
+
+    <menuitem id="shift_production_root_menu"
+              name="Shift"
+              sequence="10"/>
+
+    <menuitem id="shift_production_root"
+              name="Shift Production"
+              parent="shift_production_root_menu"
+              sequence="10"/>
+
+    <menuitem id="shift_production"
+              name="Shift Production View"
+              parent="shift_production_root"
+              sequence="10"
+              action="action_shift_production"/>
+
+    <menuitem id="shift_production_view"
+              name="Shift Production View"
+              parent="shift_production_root"
+              sequence="10"
+              action="action_shift_production"/>
+</odoo>

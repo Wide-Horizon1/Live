@@ -28,19 +28,21 @@ class StockPickingNasr(models.Model):
             counter = 0
             found_backorders = rec.env['stock.picking'].search([('origin', '=', rec.origin)])
             if found_backorders:
-                for back_orders in found_backorders:
-                    if rec.backorder_id:
-                        if rec.id > back_orders.id:
+                if rec.backorder_id:
+                    backorderseq = rec.backorder_id
+                    for back_orders in found_backorders:
+                        if backorderseq.id == back_orders.id:
                             counter += 1
+                            backorderseq = back_orders.backorder_id
                 if len(str(counter)) == 1:
                     if counter == 0:
                         rec.partial_delivery = '001'
                     else:
-                        rec.partial_delivery = '00' + str(counter)
+                        rec.partial_delivery = '00' + str(counter + 1)
                 if len(str(counter)) == 2:
-                    rec.partial_delivery = '0' + str(counter)
+                    rec.partial_delivery = '0' + str(counter + 1)
                 if len(str(counter)) == 3:
-                    rec.partial_delivery = str(counter)
+                    rec.partial_delivery = str(counter + 1)
 
     def _compute_random_unique_number(self):
         for rec in self:
