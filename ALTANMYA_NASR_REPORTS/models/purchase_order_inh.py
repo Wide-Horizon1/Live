@@ -6,7 +6,6 @@ import base64
 from num2words import num2words
 
 
-
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
 
@@ -18,10 +17,9 @@ class PurchaseOrder(models.Model):
     ETA = fields.Char('ETA')
     SN = fields.Integer('SN')
 
-
     Payment_Method = fields.Char('Payment Method')
 
-    qty = fields.Char('Qty', compute='_get_Qty', store=True)
+    qty = fields.Char('Qty')
 
     Total_quantity_ordered = fields.Char('Total_quantity_ordered ', compute='_get_value', store=True)
     total_format = fields.Char('total_format', compute='_get_value', store=True)
@@ -30,13 +28,13 @@ class PurchaseOrder(models.Model):
 
     total_price_words = fields.Char('Total Price in Words', compute='_get_value')
 
-    @api.depends('order_line.product_qty', 'order_line.product_uom_qty')
-    def _get_Qty(self):
-        for rec in self:
-            mm = self.env['purchase.order.line'].search([('order_id', '=', rec.id)])
-            for qtt in mm:
-                rec.qty = str(qtt.product_qty) + " " + qtt.product_uom.name
-            print(" rec.qty", rec.qty)
+    # @api.depends('order_line.product_qty', 'order_line.product_uom_qty')
+    # def _get_Qty(self):
+    #     for rec in self:
+    #         mm = self.env['purchase.order.line'].search([('order_id', '=', rec.id)])
+    #         for qtt in mm:
+    #             rec.qty = str(qtt.product_qty) + " " + qtt.product_uom.name
+    #         print(" rec.qty", rec.qty)
 
     @api.depends('order_line.product_qty', 'order_line.product_uom_qty')
     def _get_value(self):

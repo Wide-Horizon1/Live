@@ -96,7 +96,7 @@
                                     </td>
                                     <td style="border-left : 2px solid gray; border-top : 1px solid gray !important;border-bottom :1px solid gray !important; ">
                                         Amount
-                                    </td>
+             </td>
                                 </tr>
                                 <t t-foreach="o.order_line" t-as="order_ttt">
                                     <tr style="text-align: left; border : 0px solid #000 ;font-weight: normal;">
@@ -120,7 +120,7 @@
                                 </t>
                             </table>
                             <div class="ff"
-                                 style="width : 100%; border-left : none !important ;border-right : none !important ;border-top : 2px solid  gray; border-bottom : 2px solid gray; margin-top:300px; ">
+                                 style="width : 100%; border-left : none !important ;border-right : none !important ;border-top : 2px solid  gray; border-bottom : 2px solid gray; margin-top:10px; ">
                                 <div style=" display: flex;    justify-content: space-between;width : 70%">
                                     <span style="text-align: left !impotant; font-weight: normal;">Total quantity
                                         ordered
@@ -157,7 +157,7 @@
                             <div style=" font-weight: normal !important;">
                                 <table class="table table-borderless" style="width:100%">
                                     <tr>
-                                        <td colspan="1">Sales Dept.</td>
+                                        <td colspan="1">Purchase Dept.</td>
                                         <td colspan="1">Logistics Dept.</td>
                                         <td colspan="1">Finance Dept.</td>
                                         <td colspan="1">General Manager</td>
