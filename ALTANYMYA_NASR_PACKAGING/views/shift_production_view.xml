@@ -81,24 +81,9 @@
         </field>
     </record>
 
-    <menuitem id="shift_production_root_menu"
-              name="Shift"
-              sequence="10"/>
-
-    <menuitem id="shift_production_root"
-              name="Shift Production"
-              parent="shift_production_root_menu"
-              sequence="10"/>
-
     <menuitem id="shift_production"
-              name="Shift Production View"
-              parent="shift_production_root"
-              sequence="10"
-              action="action_shift_production"/>
-
-    <menuitem id="shift_production_view"
-              name="Shift Production View"
-              parent="shift_production_root"
+              name="Shift Production"
+              parent="mrp.menu_mrp_manufacturing"
               sequence="10"
               action="action_shift_production"/>
 </odoo>

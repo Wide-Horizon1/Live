@@ -6,8 +6,6 @@
                 <t t-foreach="docs" t-as="o">
                     <t t-call="web.external_layout">
                         <div class="page" dir="LTR" style="font-size: 14pt; font-family: Calibri; width: 100%;">
-                            <div class="line"
-                                 style="border-top: 1px solid white; margin-top: 200px; padding-top: 200px;"/>
                             <table style="width:100%; line-height: 1.5;">
                                 <tr style="line-height: 2;">
                                     <td colspan="6">

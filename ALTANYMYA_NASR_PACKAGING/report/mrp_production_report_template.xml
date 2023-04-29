@@ -7,8 +7,6 @@
                     <t t-call="web.external_layout">
                         <div class="page" dir="LTR"
                              style="font-family: Courier New; font-size: 14pt; font-weight: bold; width:100%">
-                            <div class="line"
-                                 style="border-top: 1px solid white; margin-top: 200px; padding-top: 200px;"/>
                             <div class="line" style="border-top: 1px solid black; margin-top: 0px; padding-top: 0px;"/>
                             <table class="table table-borderless" style="font-size: 16pt; width:100%">
                                 <tr>
