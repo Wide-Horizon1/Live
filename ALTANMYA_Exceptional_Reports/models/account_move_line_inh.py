@@ -51,14 +51,29 @@ class AccountMoveLineInh(models.Model):
                 order.total_amount_words = f" فقط {total_price_words} {currency_name} لاغير "
                 print("testtest..", order.total_amount_words)
 
+    # @api.depends('name','partner_id','invoice_line_ids.name')
+    # def _get_sale(self):
+    #     for rec in self:
+    #         print('recrecrec',rec)
+    #         print('recrecrec222', rec.id)
+    #         if rec and rec.id:
+    #             print('recrecrec222',rec.id)
+    #             mm = self.env['sale.order'].search([('invoice_ids', 'in', [rec.id])])
+    #             if mm:
+    #                 rec.sale_order_id = mm.id
+    #             else:
+    #                 rec.sale_order_id = False
+    #         else:
+    #             rec.sale_order_id = False
 
-    @api.depends('name')
+    @api.depends('name','invoice_origin')
     def _get_sale(self):
         for rec in self:
-            if rec and rec.id:
-                mm = self.env['sale.order'].search([('invoice_ids', 'in', [rec.id])])
-                if mm:
-                    rec.sale_order_id = mm.id
+            print('recrecrec', rec)
+            if rec.invoice_origin:
+                sale_order = self.env['sale.order'].search([('name', '=', rec.invoice_origin)], limit=1)
+                if sale_order:
+                    rec.sale_order_id = sale_order.id
                 else:
                     rec.sale_order_id = False
             else:
