@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="exceptional_invoice_report" model="ir.actions.report">
+        <field name="name">Invoice Details</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ALTANMYA_Exceptional_Reports.ex_id</field>
+        <field name="report_file">ALTANMYA_Exceptional_Reports.ex_id</field>
+        <field name="binding_model_id" ref="model_account_move"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>
