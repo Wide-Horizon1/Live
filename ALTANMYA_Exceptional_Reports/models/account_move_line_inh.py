@@ -31,9 +31,10 @@ class AccountMoveLineInh(models.Model):
     def _get_valueeee(self):
         for currency, records in groupby(self, lambda r: r.currency_id):
             for record in records:
-                total_disc = record._compute_disc()
-                record.disco = total_disc
-                print("descoesco", total_disc)
+                if record.invoice_line_ids:
+                    total_disc = record._compute_disc()
+                    record.disco = total_disc
+                    print("descoesco", total_disc)
 
     def _compute_disc(self):
         return sum(line.result for line in self.invoice_line_ids)
@@ -41,16 +42,15 @@ class AccountMoveLineInh(models.Model):
     @api.depends('invoice_line_ids.name')
     def _get_value(self):
         for order in self:
-            currency_code = order.currency_id.name
-            currency_symbol = order.currency_id.symbol or ''
-            total_price = float(order.amount_total_signed)
-            total_price_words = num2words(total_price, lang='ar').title()
-            currency_name = get_currency_name(currency_code, locale='ar')
-            order.total_amount_words = f" فقط {total_price_words} {currency_name} لاغير "
-            print("testtest..", order.total_amount_words)
+            if order.currency_id:
+                currency_code = order.currency_id.name
+                currency_symbol = order.currency_id.symbol or ''
+                total_price = float(order.amount_total_signed)
+                total_price_words = num2words(total_price, lang='ar').title()
+                currency_name = get_currency_name(currency_code, locale='ar')
+                order.total_amount_words = f" فقط {total_price_words} {currency_name} لاغير "
+                print("testtest..", order.total_amount_words)
 
-            toto = self.env['res.partner.bank'].search([('partner_id', '=', order.partner_id.id)])
-            print('toto', toto)
 
     @api.depends('name')
     def _get_sale(self):
@@ -67,7 +67,7 @@ class AccountMoveLineInh(models.Model):
     @api.depends('partner_id')
     def _compute_partner_bank_ids(self):
         for move in self:
-            if len(move.partner_id.bank_ids) > 0:
+            if move.partner_id and len(move.partner_id.bank_ids) > 0:
                 move.partner_bank_ids = move.partner_id.bank_ids[0]
             else:
                 move.partner_bank_ids = False
