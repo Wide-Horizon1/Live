@@ -59,7 +59,6 @@
                 <field name="shift"/>
                 <field name="job_ticket"/>
                 <field name="finished_product"/>
-                <field name="operation"/>
                 <field name="operator"/>
                 <field name="date"/>
                 <field name="duration_from"/>

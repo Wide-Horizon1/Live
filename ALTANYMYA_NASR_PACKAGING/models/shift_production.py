@@ -1,7 +1,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
-
 class ShiftProductionNasr(models.Model):
     _name = 'shift.production'
     _rec_name = 'sequence'
@@ -44,6 +43,13 @@ class ShiftProductionNasr(models.Model):
             res['domain'] = {'operation': [('id', 'in', rec.job_ticket.workorder_ids.workcenter_id.ids)]}
             return res
 
+
+    # @api.model
+    # def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
+    #     self.set_domain_for_product()
+    #     print(self.set_domain_for_product())
+    #     return super().search_read(domain=domain, fields=fields, offset=offset, limit=limit, order=order)
+
     @api.onchange('quantity_done', 'outs')
     def compute_sheets_done(self):
         for rec in self:
@@ -55,18 +61,43 @@ class ShiftProductionNasr(models.Model):
     @api.constrains('quantity_done')
     def check_quantity_done(self):
         for rec in self:
-            if rec.quantity_done > rec.job_ticket_qty:
-                raise ValidationError(
-                    _('Quantity of shift production must be equal or less than the quantity of manufacturing order'))
-            else:
+            if rec.job_ticket and rec.operation:
                 all_shifts = rec.env['shift.production'].search([('job_ticket', 'in', rec.job_ticket.ids)])
-                qty = rec.quantity_done
-                for lines in all_shifts:
-                    if rec.operation == lines.operation and rec.id != lines.id:
-                        qty = qty + lines.quantity_done
-                        if qty > rec.job_ticket_qty:
-                            raise ValidationError(
-                                _('Total of quantities of shift production from the same operation must be equal or less than the quantity of manufacturing order'))
+                shift_all = []
+                for shift in all_shifts:
+                    shifts = self.env['shift.production'].search([
+                        ('job_ticket', '=', shift.job_ticket.id),
+                        ('operation', '=', shift.operation.id)
+                    ])
+                    shift_all.append(shifts)
+                shift_all = [*set(shift_all)]
+                print('shift_all', shift_all)
+                for i in shift_all:
+                    total = sum(i.mapped('quantity_done'))
+                    print('total', total)
+                curr_rec = self.env['shift.production'].search([
+                    ('job_ticket', '=', rec.job_ticket.id),
+                    ('operation', '=', rec.operation.id)
+                ])
+                print("curr_rec[0]", curr_rec[0].operation.name)
+                print('curr_rec', curr_rec)
+                if len(curr_rec) > 0:
+                    total_qty_done = sum(curr_rec.mapped('quantity_done'))
+                    print('total_qty_done', total_qty_done)
+                    if total_qty_done > rec.job_ticket_qty:
+                        raise ValidationError(
+                            _("The quantity done for this operation cannot exceed the job ticket quantity."))
+                    for i in shift_all:
+                        if curr_rec[0].operation.id > i[0].operation.id:
+                            if sum(i.mapped('quantity_done')) < total_qty_done:
+                                raise ValidationError(
+                                    _("The quantity done for this operation cannot exceed the job ticket quantity."))
+
+                        if curr_rec[0].operation.id < i[0].operation.id:
+                            if sum(i.mapped('quantity_done')) > total_qty_done:
+                                raise ValidationError(
+                                    _("The quantity done for this operation cannot exceed the job ticket quantity."))
+
 
     @api.model
     def create(self, vals):

@@ -118,7 +118,7 @@
                                             <br/>
                                             <img t-if="o.product_id.image_1920"
                                                  t-att-src="image_data_uri(o.product_id.image_1920)" border="0"
-                                                 style="width: 100%;"/>
+                                                 style="width: 90%;"/>
                                         </center>
                                     </td>
                                 </tr>
