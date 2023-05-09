@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_attendance_inherited" model="ir.ui.view">
+        <field name="name">hr.attendance.inherited</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.view_attendance_tree"/>
+        <field name="arch" type="xml">
+            <field name="employee_id" position="after">
+                <field name="reg_number" invisible="1"/>
+                <field name="emp" invisible="1"/>
+                <field name="del_emp" invisible="1"/>
+            </field>
+        </field>
+    </record>
+</odoo>
