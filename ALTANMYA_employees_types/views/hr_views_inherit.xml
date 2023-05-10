@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem
+                id="menu_hr_employee_user"
+                name="الزملاء"
+                action="ALTANMYA_employees_types.open_view_employee_list_my"
+                parent="hr.menu_hr_employee_payroll"
+                groups="ALTANMYA_employees_types.group_normal_emp_user"
+                sequence="1"/>
+        <menuitem
+                id="menu_hr_leader_user"
+                name="القياديين"
+                action="ALTANMYA_employees_types.open_view_leader_list_my"
+                parent="hr.menu_hr_employee_payroll"
+                groups="ALTANMYA_employees_types.group_leader_emp_user"
+                sequence="1"/>
+    </data>
+</odoo>
