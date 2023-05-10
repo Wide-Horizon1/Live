@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="employees_total_attendance_action" model="ir.actions.report">
+        <field name="name">جدول دوام العاملين</field>
+        <field name="model">emp.total.att.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ALTANMYA_Attendance_Reports.employee_total_attendance_template1</field>
+        <field name="report_file">ALTANMYA_Attendance_Reports.employee_total_attendance_template1</field>
+        <field name="print_report_name">'جدول دوام العاملين'</field>
+        <field name="binding_model_id" ref="model_emp_total_att_wizard"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="employee_total_attendance_template1">
+        <t t-call="web.html_container">
+            <t t-call="ALTANMYA_Attendance_Reports.emp_total_att_layout">
+                <table style="border: 1pt solid black;display:block;" dir="rtl">
+                    <thead style="background-color:grey;
+                    width : 100%
+                   ">
+                        <tr>
+                            <th class="text-center" style="background-color:grey;
+                    padding:10px;
+                   ">مسلسل
+                            </th>
+                            <th class="text-center" style="background-color:grey;
+                    padding:10px;
+                   ">الاسم
+                            </th>
+                            <th class="text-center" style="background-color:grey;
+                    padding:10px;
+                   ">عدد ساعات التأخر الغبر مبرر
+                            </th>
+                            <th class="text-center" style="background-color:grey;
+                    padding:10px;
+                   ">مجموع أيام التأخير
+                            </th>
+                            <th class="text-center" style="background-color:grey;
+                    padding:10px;
+                   ">عدد أيام الغياب الغير مبرر
+                            </th>
+                            <th class="text-center" style="background-color:grey;
+                    padding:10px;" colspan="2">مــلاحــظــات
+                            </th>
+                        </tr>
+                    </thead>
+                    <t t-foreach="fetched_data" t-as="rec">
+                        <tbody>
+                            <tr>
+                                <td class="text-center">
+                                    <div t-if="rec.get('row_number')">
+                                        <span t-esc="rec['row_number']"/>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div t-if="rec.get('name')">
+                                        <span t-esc="rec['name']"/>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div t-if="rec.get('total_late_hours')">
+                                        <span t-esc="rec['total_late_hours']"/>
+                                    </div>
+                                    <div t-if="not rec.get('total_late_hours')">
+                                        <span>-</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div t-if="rec.get('total_late_days')">
+                                        <span t-esc="rec['total_late_days']"/>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div t-if="rec.get('total_absent_days')">
+                                        <span t-esc="rec['total_absent_days']"/>
+                                    </div>
+                                    <div t-if="not rec.get('total_absent_days')">
+                                        <span> - </span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </t>
+                </table>
+            </t>
+        </t>
+    </template>
+
+</odoo>

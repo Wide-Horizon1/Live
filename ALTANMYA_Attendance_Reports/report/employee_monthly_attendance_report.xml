@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="employee_monthly_attendance_action" model="ir.actions.report">
+        <field name="name">جدول الدوام الشهري</field>
+        <field name="model">emp.monthly.att.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ALTANMYA_Attendance_Reports.employee_monthly_attendance_template</field>
+        <field name="report_file">ALTANMYA_Attendance_Reports.employee_monthly_attendance_template</field>
+        <field name="print_report_name">'جدول الدوام الشهري'</field>
+        <field name="binding_model_id" ref="model_emp_monthly_att_wizard"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="employee_monthly_attendance_template">
+        <t t-call="web.html_container">
+            <t t-call="ALTANMYA_Attendance_Reports.emp_monthly_att_layout">
+                <table style="border: 1pt solid black;display:block;" dir="rtl">
+                    <thead>
+                        <tr>
+                            <th style="background-color:grey;
+                    padding:10px;
+                   ">التاريخ
+                            </th>
+                            <th style="background-color:grey;
+                    padding:10px;
+                   ">طبيعة اليوم
+                            </th>
+                            <th style="background-color:grey;
+                    padding:10px;
+                   ">دخول 1
+                            </th>
+                            <th style="background-color:grey;
+                    padding:10px;
+                   ">خروج 1
+                            </th>
+                            <th style="background-color:grey;
+                    padding:10px;
+                   ">دخول 2
+                            </th>
+                            <th style="background-color:grey;
+                    padding:10px;
+                   ">خروج 2
+                            </th>
+                            <th style="background-color:grey;
+                    padding:10px;
+                   ">إجازة ساعية
+                            </th>
+                            <th style="background-color:grey;
+                    padding:10px;
+                   ">ساعات العمل
+                            </th>
+                            <th style="background-color:grey;
+                    padding:10px;
+                   ">تأخر صباحي
+                            </th>
+                            <th style="background-color:grey;
+                    padding:10px;
+                   ">خروج مبكر
+                            </th>
+                        </tr>
+                        <t t-foreach="allFetched" t-as="rec">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div t-if="rec.get('date')">
+                                            <span t-esc="rec['date']"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div t-if="rec.get('day_type')">
+                                            <span t-esc="rec['day_type']['ar_001']"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div t-if="rec.get('entry1')">
+                                            <span t-esc="rec['entry1']"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div t-if="rec.get('out1')">
+                                            <span t-esc="rec['out1']"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div t-if="rec.get('entry2')">
+                                            <span t-esc="rec['entry2']"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div t-if="rec.get('out2')">
+                                            <span t-esc="rec['out2']"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div t-if="rec.get('leave_name')">
+                                            <span t-esc="rec['leave_name']"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div t-if="rec.get('work_hours')">
+                                            <span t-esc="rec['work_hours']"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div t-if="rec.get('diff_entry')">
+                                            <div t-if="rec['diff_entry'][0] == '-'">
+                                                <span t-esc="rec['diff_entry']"/>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div t-if="rec.get('diff_Exit')">
+                                            <div t-if="rec['diff_Exit'][0] == '-'">
+                                                <span t-esc="rec['diff_Exit']"/>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </t>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <div>
+                                        <span>المجموع</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div t-if="total_hours">
+                                        <span t-esc="total_hours"/>
+                                    </div>
+                                </td>
+                                <td/>
+                                <td/>
+                                <td/>
+                                <td/>
+                            </tr>
+                        </tbody>
+                    </thead>
+                </table>
+            </t>
+        </t>
+    </template>
+</odoo>

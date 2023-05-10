@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="emp_total_att_layout">
+        <div class="header">
+             <![CDATA[&nbsp;]]>
+             <![CDATA[&nbsp;]]>
+            <div class="text-center" dir="rtl">
+                <![CDATA[&nbsp;]]>
+                <![CDATA[&nbsp;]]>
+                <span>جدول دوام العاملين في الاتحاد عن شهر</span>
+                <t t-if="month == '01'">
+                    <span>كانون الثاني</span>
+                </t>
+                <t t-if="month == '02'">
+                    <span>شباط</span>
+                </t>
+                <t t-if="month == '03'">
+                    <span>آذار</span>
+                </t>
+                <t t-if="month == '04'">
+                    <span>نيسان</span>
+                </t>
+                <t t-if="month == '05'">
+                    <span>أيار</span>
+                </t>
+                <t t-if="month == '06'">
+                    <span>حزيران</span>
+                </t>
+                <t t-if="month == '07'">
+                    <span>تموز</span>
+                </t>
+                <t t-if="month == '08'">
+                    <span>آب</span>
+                </t>
+                <t t-if="month == '09'">
+                    <span>أيلول</span>
+                </t>
+                <t t-if="month == '10'">
+                    <span>تشرين الأول</span>
+                </t>
+                <t t-if="month == '11'">
+                    <span>تشرين الثاني</span>
+                </t>
+                <t t-if="month == '12'">
+                    <span>كانون الأول</span>
+                </t>
+                <span>لعام</span>
+                <t t-esc="year"/>
+            </div>
+        </div>
+        <div class="article o_report_layout_standard o_company_1_layout">
+            <t t-out="0"/>
+        </div>
+        <div class="footer o_standard_footer">
+            <div class="row" style="report_header_style">
+
+            </div>
+        </div>
+    </template>
+</odoo>

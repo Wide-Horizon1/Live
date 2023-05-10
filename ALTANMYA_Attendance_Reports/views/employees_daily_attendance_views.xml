@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="daily_att_action" model="ir.actions.server">
+        <field name="name">daily_attendance_report</field>
+        <field name="model_id" ref="model_employees_daily_attendance_report"/>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="code">action = model.open_choose_date_wizard()</field>
+    </record>
+
+    <record id="monthly_att_action" model="ir.actions.server">
+        <field name="name">monthly_attendance_report</field>
+        <field name="model_id" ref="model_employees_daily_attendance_report"/>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="code">action = model.open_choose_employee_wizard()</field>
+    </record>
+
+    <record id="employee_total_attendance_action" model="ir.actions.server">
+        <field name="name">total_attendance_report</field>
+        <field name="model_id" ref="model_employees_daily_attendance_report"/>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="code">action = model.open_choose_date_total_att_wizard()</field>
+    </record>
+
+    <menuitem
+            id="employees_daily_attendance"
+            name="طباعة تقرير الحضور اليومي للموظفين"
+            parent="ALTANMYA_Attendence_Payroll_System.fgdevice_process"
+            action="daily_att_action"
+            sequence="20"/>
+
+    <menuitem
+            id="employee_monthly_attendance"
+            name="طباعة تقرير الحضور الشهري لموظف معين"
+            parent="ALTANMYA_Attendence_Payroll_System.fgdevice_process"
+            action="monthly_att_action"
+            sequence="23"/>
+
+    <menuitem
+            id="employee_total_attendance"
+            name="طباعة تقرير جدول دوام العاملين"
+            parent="ALTANMYA_Attendence_Payroll_System.fgdevice_process"
+            action="employee_total_attendance_action"
+            sequence="25"/>
+
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+emp_daily_att_wizard,emp.daily.att.wizard,model_emp_daily_att_wizard,ALTANMYA_Attendence_Payroll_System.altanmya_fgp_hr,1,1,1,0
+employees_daily_attendance_report,employees.daily.attendance.report,model_employees_daily_attendance_report,ALTANMYA_Attendence_Payroll_System.altanmya_fgp_hr,1,1,1,0
+emp_monthly_att_wizard,emp.monthly.att.wizard,model_emp_monthly_att_wizard,ALTANMYA_Attendence_Payroll_System.altanmya_fgp_hr,1,1,1,0
+emp_total_att_wizard,emp.total.att.wizard,model_emp_total_att_wizard,ALTANMYA_Attendence_Payroll_System.altanmya_fgp_hr,1,1,1,0

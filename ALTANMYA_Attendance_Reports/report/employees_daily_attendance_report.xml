@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="employees_daily_attendance_action" model="ir.actions.report">
+        <field name="name">تقرير التأخر اليومي</field>
+        <field name="model">emp.daily.att.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ALTANMYA_Attendance_Reports.employees_daily_attendance_template</field>
+        <field name="report_file">ALTANMYA_Attendance_Reports.employees_daily_attendance_template</field>
+        <field name="print_report_name">'تقرير التأخر اليومي'</field>
+        <field name="binding_model_id" ref="model_emp_daily_att_wizard"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="employees_daily_attendance_template">
+        <t t-call="web.html_container">
+            <t t-call="ALTANMYA_Attendance_Reports.nuss_external_layout_standard">
+                <table style="border: 1pt solid black;display:block;" dir="rtl">
+                    <thead>
+                        <tr>
+                            <th style="background-color:grey;
+                    padding:10px;
+                   ">رقم
+                            </th>
+                            <th class="text-center" style="background-color:grey;
+                    padding:10px;
+                    ">اسم الموظف
+                            </th>
+                            <th class="text-center" style="background-color:grey;
+                    padding:10px;
+                    ">اسم القسم
+                            </th>
+                            <th class="text-center" style="background-color:grey;
+                    padding:10px;
+                    ">وضع اليوم
+                            </th>
+                            <th class="text-center" style="background-color:grey;
+                    padding:10px;
+                    ">ساعة الدخول
+                            </th>
+                            <th class="text-center" style="background-color:grey;
+                    padding:10px;
+                    ">ساعة الخروج
+                            </th>
+                            <th class="text-center" style="background-color:grey;
+                    padding:10px;
+                    ">مدة الساعية
+                            </th>
+                            <th class="text-center" style="background-color:grey;
+                    padding:10px;
+                    ">نوع الساعية
+                            </th>
+                            <th class="text-center" style="background-color:grey;
+                    padding:10px;
+                    ">مدة التأخر
+                            </th>
+                        </tr>
+                    </thead>
+                    <br/>
+                    <t t-foreach="fetchedData" t-as="record">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div t-if="record.get('badge_number')">
+                                        <span t-esc="record['badge_number']"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div t-if="record.get('employee_name')">
+                                        <span t-esc="record['employee_name']"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div t-if="record.get('department_name')">
+                                        <span t-esc="record['department_name']"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div t-if="record.get('in_hour')">
+                                        <div t-if="record.get('out_hour')">
+                                            <span>حضور</span>
+                                        </div>
+                                    </div>
+                                    <div t-if="not record.get('in_hour')">
+                                        <div t-if="not record.get('out_hour')">
+                                            <span>غياب</span>
+                                        </div>
+                                    </div>
+                                    <div t-if="record.get('in_hour')">
+                                        <div t-if="not record.get('out_hour')">
+                                            <span>للتدقيق</span>
+                                        </div>
+                                    </div>
+                                    <div t-if="not record.get('in_hour')">
+                                        <div t-if="record.get('out_hour')">
+                                            <span>للتدقيق</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div t-if="record.get('in_hour')">
+                                        <span t-esc="record['in_hour']"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div t-if="record.get('out_hour')">
+                                        <span t-esc="record['out_hour']"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div t-if="record.get('leave_duration')">
+                                        <span t-esc="record['leave_duration']"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div t-if="record.get('leave_name')">
+                                        <span t-esc="record['leave_name']"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div t-if="record.get('diff_entry')">
+                                        <span t-esc="record['diff_entry']"/>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </t>
+                </table>
+            </t>
+        </t>
+    </template>
+</odoo>
