@@ -4,9 +4,7 @@
     'version': '1.0',
     'sequence': -201,
     'depends': ['base', 'hr'],
-    'data': [
-        'views/views.xml',
-    ],
+    'data': [],
     'license': 'LGPL-3',
     'installable': True,
     'application': True,
