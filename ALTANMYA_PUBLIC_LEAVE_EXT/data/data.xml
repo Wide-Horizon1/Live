@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+    <!-- Compensatory Days -->
+        <record id="holiday_status_public" model="hr.leave.type">
+            <field name="name">Compensatory Days for public</field>
+            <field name="requires_allocation">yes</field>
+            <field name="employee_requests">yes</field>
+            <field name="leave_validation_type">both</field>
+            <field name="request_unit">day</field>
+            <field name="color_name">lavender</field>
+            <field name="leave_notif_subtype_id" ref="hr_holidays.mt_leave"/>
+            <field name="responsible_id" ref="base.user_admin"/>
+            <field name="work_entry_type_id" ref="hr_work_entry_contract.work_entry_type_compensatory" />
+        </record>
+
+    </data>
+
+
+
+
+</odoo>
