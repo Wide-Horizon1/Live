@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="choose_employees_total_attendance" model="ir.ui.view">
+        <field name="name">choose.employees.total.attendance.wizard</field>
+        <field name="model">emp.total.att.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Choose the date of the report">
+                <group>
+                    <field name="year"/>
+                    <field name="month"/>
+                    <field name="shift_ids" widget="many2many_tags"/>
+                    <field name="att_mode"/>
+                </group>
+                <footer>
+                    <button string="OK" class="btn-primary" type="object" name="save_options" data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
