@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--inherit and add fields to sale order-->
+    <record id="tanHrLeaveType_inherit" model="ir.ui.view">
+        <field name="name">anHrLeaveType.inherit</field>
+        <field name="model">hr.leave.type</field>
+        <field name="inherit_id" ref="hr_holidays.edit_holiday_status_form"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="effectoffdays"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="tanHrEmpLostLeave_inherit" model="ir.ui.view">
+        <field name="name">tanHrEmpLostLeave.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='identification_group']" position="after" >
+                   <group string="Leaves status" name="leaves_status">
+                        <field name="lost_leaves_current"/>
+                        <field name="lost_leaves_previous"/>
+                        <field name="sum_leaves"/>
+<!--                        <field name="sum_taken"/>-->
+                    </group>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

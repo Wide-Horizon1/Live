@@ -1,0 +1,17 @@
+{
+    'name': 'Altanmya leave update extension',
+    'version': '1.0',
+    'summary': 'Serve for leaves',
+    'description': "",
+    'category': 'Human Resources/Employees',
+    'author': 'Altanmya co.',
+    'company': 'Altanmya',
+    'website': "https://www.altanmya.net",
+    'depends': ['hr','resource','hr_holidays'],
+    'data': ['security/ir.model.access.csv','views/view_views.xml'],
+    'demo': [],
+    'qweb': [],
+    'installable': True,
+    'auto_install': False,
+    'application': False,
+}
