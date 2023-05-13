@@ -29,14 +29,15 @@ class HRLeave(models.Model):
         if self.employee_ids:
             employee_contract_date = self.env['hr.employee'].search(
                 [('id', '=', self.employee_ids[0]._origin.id)]).first_contract_date
-            employee_service_days = leave_start_date.date() - employee_contract_date
-            print('employee_service_days', employee_service_days.days)
-            if employee_service_days.days >= 0:
-                print('in if', employee_service_days.days)
-                return employee_service_days.days
-            else:
-                print('in else', employee_service_days.days)
-                return 0
+            if employee_contract_date:
+                employee_service_days = leave_start_date.date() - employee_contract_date
+                print('employee_service_days', employee_service_days.days)
+                if employee_service_days.days >= 0:
+                    print('in if', employee_service_days.days)
+                    return employee_service_days.days
+                else:
+                    print('in else', employee_service_days.days)
+                    return 0
 
     def compute_total_leaves_custom_type(self, leave_type):
         global total
@@ -76,12 +77,50 @@ class HRLeave(models.Model):
         if self.holiday_status_id.is_configurable:
             for holiday in self:
                 if holiday.holiday_status_id.is_connected_days:
-                    unusaldays = holiday.employee_id._get_unusual_days(holiday.date_from, holiday.date_to)
-                    print('unusaldays', unusaldays)
-                    if unusaldays:
-                        holiday.number_of_days = holiday.number_of_days + len(
-                            [elem for elem in unusaldays.values() if elem])
-                        holiday.number_of_days = int(holiday.number_of_days)
+                    if holiday.holiday_status_id.include_public_holidays:
+                        unusaldays = holiday.employee_id._get_unusual_days(holiday.date_from, holiday.date_to)
+                        print('unusaldays', unusaldays)
+                        if unusaldays:
+                            print('first ', holiday.number_of_days)
+                            holiday.number_of_days = holiday.number_of_days + len(
+                                [elem for elem in unusaldays.values() if elem])
+                            holiday.number_of_days = int(holiday.number_of_days)
+                    else:
+                        unusaldays = holiday.employee_id._get_unusual_days(holiday.date_from, holiday.date_to)
+                        print('unusaldays', unusaldays)
+                        unusal_dates = []
+                        usual_dates = []
+                        public_holidays = self.env['resource.calendar.leaves'].search(
+                            ['&', ('resource_id', '=', False),
+                             ('calendar_id', 'in', (holiday.employee_id.resource_calendar_id.id, False))])
+                        for key, value in unusaldays.items():
+                            print('d ', key, value)
+                            if value:
+                                unusal_dates.append(key)
+                            else:
+                                usual_dates.append(key)
+                        print('dates: ', unusal_dates, '------', usual_dates)
+                        temp_dates = []
+                        for date in unusal_dates:
+                            is_usal = False
+                            for public_holiday in public_holidays:
+                                print('public holiday is : ', public_holiday)
+                                print('start & end ', public_holiday.date_from.strftime("%Y-%m-%d"), 'to ',
+                                      public_holiday.date_to.strftime("%Y-%m-%d"))
+                                if public_holiday.date_from.strftime(
+                                    "%Y-%m-%d") <= date <= public_holiday.date_to.strftime("%Y-%m-%d"):
+                                    is_usal = True
+                            if not is_usal:
+                                temp_dates.append(date)
+                        for rec in temp_dates:
+                            usual_dates.append(rec)
+                        print('final dates ', usual_dates)
+                        if unusaldays:
+                            print('holiday.number_of_days ', holiday.number_of_days)
+                            holiday.number_of_days = len(
+                                [elem for elem in usual_dates])
+                            print('holiday.number_of_days ', holiday.number_of_days)
+                            holiday.number_of_days = int(holiday.number_of_days)
 
     @api.constrains('holiday_status_id')
     def check_leave_if_specified_to_employee(self):
@@ -171,7 +210,8 @@ class HRLeave(models.Model):
                     # if diff != 12:
                     print('diff', diff)
                     # if diff < 11:
-                    allowed_days_for_this_employee = self.holiday_status_id.number_of_allowed_days - (self.holiday_status_id.number_of_allowed_days * (
+                    allowed_days_for_this_employee = self.holiday_status_id.number_of_allowed_days - (
+                            self.holiday_status_id.number_of_allowed_days * (
                             diff / 12))
                     print('allowed days', round(allowed_days_for_this_employee))
                     return round(allowed_days_for_this_employee)

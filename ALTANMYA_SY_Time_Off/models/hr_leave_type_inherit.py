@@ -26,6 +26,7 @@ class Vacation(models.Model):
                                       ('employee', 'Employee'),
                                       ('shift', 'Shift')],
                                      default='none')
+    include_public_holidays = fields.Boolean('Include Public Holidays?', default=False)
     specified_employees = fields.Many2many('hr.employee')
     shift_ids = fields.Many2many('resource.calendar', string='Shifts')
     apply_pro_rata = fields.Boolean(string='Apply Pro Rata')
