@@ -27,7 +27,7 @@ class HRLeave(models.Model):
         return {'domain': {'holiday_status_id': domain}}
 
     def compute_employee_service_days(self, leave_start_date):
-        if self.employee_ids:
+        if self.employee_ids or self.employee_id:
             employee_contract_date = self.env['hr.employee'].search(
                 [('id', '=', self.employee_ids[0]._origin.id)]).first_contract_date
             if employee_contract_date:
@@ -198,7 +198,7 @@ class HRLeave(models.Model):
 
     # for pro rata leaves
     def calculate_days_based_on_pro_rata(self):
-        if self.employee_ids:
+        if self.employee_ids or self.employee_id:
             if self.holiday_status_id.apply_pro_rata:
                 employee_contract_date = self.env['hr.employee'].search(
                     [('id', '=', self.employee_ids[0]._origin.id)]).first_contract_date
@@ -254,7 +254,7 @@ class HRLeave(models.Model):
     @api.onchange('holiday_status_id', 'employee_ids')
     def _compute_employee_leaves(self):
         for rec in self:
-            if rec.employee_ids:
+            if rec.employee_ids or rec.employee_id:
                 rec.employee_total_leaves = rec.employee_ids[0]._origin.total_sick_leaves
                 print('emp total')
                 print(rec.employee_ids[0]._origin.total_sick_leaves)
