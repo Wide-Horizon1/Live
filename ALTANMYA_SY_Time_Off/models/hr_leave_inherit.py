@@ -238,7 +238,7 @@ class HRLeave(models.Model):
 
     def write(self, values):
         result = super(HRLeave, self).write(values)
-        # self.env['hr.employee'].search([('id', '=', self.employee_ids[0].id)]).compute_total_leaves()
+        self.env['hr.employee'].search([('id', '=', self.employee_ids[0].id)]).compute_total_leaves()
         # if self.holiday_status_id.is_configurable:
         #     self.check_leave_if_specified_to_employee()
         #     self.check_employees_number_configurable_leave()
