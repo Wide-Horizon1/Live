@@ -1,6 +1,8 @@
 from odoo import api, fields, models
 import logging
 import pytz
+import math
+
 
 from collections import namedtuple, defaultdict
 from dateutil.relativedelta import relativedelta
@@ -31,6 +33,53 @@ DAY_SELECT_SELECTION_NO_LAST = tuple(zip(DAY_SELECT_VALUES, (str(i) for i in ran
 
 class HrLeaveInh(models.Model):
     _inherit = 'hr.leave'
+    accrual_plan_id = fields.Many2one('hr.leave.accrual.plan', string='Accrual Plan')
+    possible_days = fields.Char('Forecast Future Allocation', readonly=True, compute='_get_date_possible')
+
+    @api.depends('request_date_from')
+    # @api.onchange('request_date_from')
+    def _get_date_possible(self):
+        for holiday in self:
+            aco_hr_leave = self.env['hr.leave.accrual.plan'].search([], limit=1)  # Retrieve the record
+            if aco_hr_leave.Forecast_Future_Allocation:
+                # Perform the necessary computations
+                mapped_days = self.holiday_status_id.get_employees_days(
+                    (holiday.employee_id | holiday.employee_ids).ids,
+                    holiday.date_from.date())
+                if holiday.holiday_type != 'employee' \
+                        or not holiday.employee_id and not holiday.employee_ids \
+                        or holiday.holiday_status_id.requires_allocation == 'no':
+                    continue
+                if holiday.employee_id:
+                    leave_days = mapped_days[holiday.employee_id.id][holiday.holiday_status_id.id]
+                    allocation = self.env['hr.leave.allocation'].search([('employee_id', '=', holiday.employee_id.id),
+                                                                         ('allocation_type', '=', 'accrual')])
+                    m = allocation.get_total_invoked(holiday.request_date_from)
+
+                    holiday.possible_days = m +  math.floor(leave_days['virtual_remaining_leaves'])
+                    print('self.possible_days..', holiday.possible_days)
+                    print("leave_days['virtual_remaining_leaves']", leave_days['virtual_remaining_leaves'])
+                    print('mvvv.m..', m)
+            else:
+                # Set possible_days to a default value when Forecast_Future_Allocation is False
+                mapped_days = self.holiday_status_id.get_employees_days(
+                    (holiday.employee_id | holiday.employee_ids).ids,
+                    holiday.date_from.date())
+                if holiday.holiday_type != 'employee' \
+                        or not holiday.employee_id and not holiday.employee_ids \
+                        or holiday.holiday_status_id.requires_allocation == 'no':
+                    continue
+                if holiday.employee_id:
+                    leave_days = mapped_days[holiday.employee_id.id][holiday.holiday_status_id.id]
+                    allocation = self.env['hr.leave.allocation'].search([('employee_id', '=', holiday.employee_id.id),
+                                                                         ('allocation_type', '=', 'accrual')])
+                    m = allocation.get_total_invoked(holiday.request_date_from)
+
+                    holiday.possible_days = int(leave_days['remaining_leaves'])
+                    print('self.possible_days..', holiday.possible_days)
+                    print("leave_days['virtual_remaining_leaves']", leave_days['virtual_remaining_leaves'])
+                    print('mvvv.m..', m)
+
 
     @api.constrains('state', 'number_of_days', 'holiday_status_id')
     def _check_holidays(self):
@@ -43,25 +92,24 @@ class HrLeaveInh(models.Model):
                 continue
             if holiday.employee_id:
                 leave_days = mapped_days[holiday.employee_id.id][holiday.holiday_status_id.id]
-                print('request_date_from..', holiday.request_date_from)
-                print('datetime.now()...', datetime.now().date())
-                print('result-data', holiday.request_date_from - datetime.now().date())
-                print('leave_days..', leave_days)
-                print("float_compare(leave_days['remaining_leaves'], 0, precision_digits=2)..",
-                      float_compare(leave_days['remaining_leaves'], 0, precision_digits=2))
-                print("float_compare(leave_days['virtual_remaining_leaves'], 0, precision_digits=2)",
-                      float_compare(leave_days['virtual_remaining_leaves'], 0, precision_digits=2))
                 allocation = self.env['hr.leave.allocation'].search([('employee_id', '=', holiday.employee_id.id),
                                                                      ('allocation_type', '=', 'accrual')])
-                print('alllocasnvisdnv ', allocation)
                 m = allocation.get_total_invoked(holiday.request_date_from)
-                print('tetetst..',m)
-                if float_compare(leave_days['remaining_leaves'], 0, precision_digits=2) == -1 \
-                        or float_compare(leave_days['virtual_remaining_leaves'] + m, 0, precision_digits=2) == -1:
-                    print('sadads',float_compare(leave_days['virtual_remaining_leaves'] + m, 0, precision_digits=2))
-                    raise ValidationError(
-                        _('The number of remaining time off is not sufficient for this time off type.\n'
-                          'Please also check the time off waiting for validation.'))
+                print('tetetst..', m)
+                aco_hr_leave = self.env['hr.leave.accrual.plan'].search([], limit=1)  # Retrieve the record
+                if aco_hr_leave.Forecast_Future_Allocation:
+                    if float_compare(leave_days['remaining_leaves'], 0, precision_digits=2) == -1 \
+                            or float_compare(leave_days['virtual_remaining_leaves'] + m, 0, precision_digits=2) == -1:
+                        raise ValidationError(
+                            _('The number of remaining time off is not sufficient for this time off type.\n'
+                              'Please also check the time off waiting for validation.'))
+                else:
+                    if float_compare(leave_days['remaining_leaves'], 0, precision_digits=2) == -1 \
+                            or float_compare(leave_days['virtual_remaining_leaves'], 0, precision_digits=2) == -1:
+                        raise ValidationError(
+                            _('The number of remaining time off is not sufficient for this time off type.\n'
+                              'Please also check the time off waiting for validation.'))
+
             else:
                 unallocated_employees = []
                 for employee in holiday.employee_ids:
@@ -89,7 +137,7 @@ class test(models.Model):
             forcasted_days = 0
             if current_level:
                 nextcall = current_level._get_next_date(allocation.nextcall)
-                print('next call', nextcall , leave_start_date)
+                print('next call', nextcall, leave_start_date)
                 while nextcall <= leave_start_date:
                     print('i : ', i)
                     nextcall = current_level._get_next_date(nextcall)
@@ -98,7 +146,12 @@ class test(models.Model):
                 forcasted_days = i * current_level.added_value
         return forcasted_days
 
-            # if self._get_next_date_edited(self.last)
+        # if self._get_next_date_edited(self.last)
+
+
+class AcoHrLeaveInh(models.Model):
+    _inherit = 'hr.leave.accrual.plan'
+    Forecast_Future_Allocation = fields.Boolean('Forecast_Future_Allocation', default=False)
 
 
 class AcoHrLeaveInh(models.Model):
