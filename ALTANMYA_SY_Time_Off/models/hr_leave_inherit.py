@@ -1,5 +1,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
+from pytz import timezone, utc
 
 from datetime import datetime
 
@@ -105,10 +106,14 @@ class HRLeave(models.Model):
                             is_usal = False
                             for public_holiday in public_holidays:
                                 print('public holiday is : ', public_holiday)
-                                print('start & end ', public_holiday.date_from.strftime("%Y-%m-%d"), 'to ',
-                                      public_holiday.date_to.strftime("%Y-%m-%d"))
-                                if public_holiday.date_from.strftime(
-                                    "%Y-%m-%d") <= date <= public_holiday.date_to.strftime("%Y-%m-%d"):
+                                print('start and end are ',
+                                      public_holiday.date_from.astimezone(timezone("Asia/baghdad")),
+                                      public_holiday.date_to)
+                                print('start & end ', public_holiday.date_from.astimezone(timezone("Asia/baghdad")).strftime("%Y-%m-%d"), 'to ',
+                                      public_holiday.date_to.astimezone(timezone("Asia/baghdad")).strftime("%Y-%m-%d"))
+                                if public_holiday.date_from.astimezone(timezone("Asia/baghdad")).strftime(
+                                        "%Y-%m-%d") <= date <= public_holiday.date_to.astimezone(
+                                    timezone("Asia/baghdad")).strftime("%Y-%m-%d"):
                                     is_usal = True
                             if not is_usal:
                                 temp_dates.append(date)
@@ -219,6 +224,8 @@ class HRLeave(models.Model):
                     return self.holiday_status_id.number_of_allowed_days
             else:
                 return self.holiday_status_id.number_of_allowed_days
+        else:
+            return self.holiday_status_id.number_of_allowed_days
 
     # sick leaves
     @api.model_create_multi
@@ -275,7 +282,7 @@ class HRLeave(models.Model):
                 print(self.holiday_status_id.leave_date_from)
                 print('-------debug--------')
                 print(self.holiday_status_id.leave_date_to >=
-                        self.employee_total_leaves + self.number_of_days >= self.holiday_status_id.leave_date_from)
+                      self.employee_total_leaves + self.number_of_days >= self.holiday_status_id.leave_date_from)
                 print(self.holiday_status_id.leave_date_to != 0)
                 print(self.holiday_status_id.leave_date_from, self.employee_total_leaves)
                 print(self.holiday_status_id.leave_date_from <= self.employee_total_leaves)
