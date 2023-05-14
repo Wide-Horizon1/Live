@@ -244,7 +244,7 @@ class HRLeave(models.Model):
         #     self.check_matching_marital_status()
         return result
 
-    @api.onchange('holiday_status_id', 'employee_ids')
+    @api.depends('employee_ids')
     def _compute_employee_leaves(self):
         for rec in self:
             if rec.employee_ids:
@@ -253,12 +253,12 @@ class HRLeave(models.Model):
                 print(rec.employee_ids[0]._origin.total_sick_leaves)
                 print(rec.employee_total_leaves)
 
-    # def read(self, fields=None, load='_classic_read'):
-    #     res = super(HRLeave, self).read(fields=fields, load=load)
-    #     for rec in self:
-    #         rec._compute_employee_leaves()
-    #         self.env['hr.employee'].search([('id', '=', rec.employee_ids[0].id)]).compute_total_leaves()
-    #     return res
+    def read(self, fields=None, load='_classic_read'):
+        res = super(HRLeave, self).read(fields=fields, load=load)
+        for rec in self:
+            rec._compute_employee_leaves()
+            self.env['hr.employee'].search([('id', '=', rec.employee_ids[0].id)]).compute_total_leaves()
+        return res
 
     @api.constrains('holiday_status_id')
     def check_employees_number_configurable_leave(self):
@@ -270,20 +270,14 @@ class HRLeave(models.Model):
         if self.holiday_status_id.is_configurable:
             if self.holiday_status_id.is_sick_leave:
                 print('constraint entered')
-                print(self.holiday_status_id.leave_date_to, self.employee_total_leaves)
+                print(self.holiday_status_id.leave_date_to)
                 print(self.employee_total_leaves + self.number_of_days)
                 print(self.holiday_status_id.leave_date_from)
-                print('-------debug--------')
-                print(self.holiday_status_id.leave_date_to >=
-                        self.employee_total_leaves + self.number_of_days >= self.holiday_status_id.leave_date_from)
-                print(self.holiday_status_id.leave_date_to != 0)
-                print(self.holiday_status_id.leave_date_from, self.employee_total_leaves)
-                print(self.holiday_status_id.leave_date_from <= self.employee_total_leaves)
                 if not (
                         self.holiday_status_id.leave_date_to >=
                         self.employee_total_leaves + self.number_of_days >= self.holiday_status_id.leave_date_from \
                         and self.holiday_status_id.leave_date_to != 0 \
-                        and self.holiday_status_id.leave_date_from <= self.employee_total_leaves + self.number_of_days):
+                        and self.holiday_status_id.leave_date_from <= self.employee_total_leaves):
                     raise ValidationError('لا يحق للموظف أخذ هذا النوع من الإجازة المرضية')
 
     @api.constrains('holiday_status_id')
