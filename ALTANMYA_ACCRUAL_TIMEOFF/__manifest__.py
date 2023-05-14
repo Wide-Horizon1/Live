@@ -8,9 +8,7 @@
     'company': 'ALTANMYA - TECHNOLOGY SOLUTIONS Part of ALTANMYA GROUP',
     'website': "https://tech.altanmya.net",
     'depends': ['hr_holidays'],
-    'data': [
-        'views/test_test.xml'
-    ],
+    'data': [],
     'demo': [],
     'installable': True,
     'auto_install': False,
