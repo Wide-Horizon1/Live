@@ -59,7 +59,7 @@ class HRLeave(models.Model):
 
     def compute_non_repeated_leaves_total(self):
         for rec in self:
-            # print('employee name in repeated', rec.employee_ids[0].id)
+            print('employee name in repeated', rec.employee_ids[0].id)
             non_repeated_leaves = self.env['hr.leave'].search(
                 [('holiday_status_id.is_repeated', '=', False), ('employee_id', '=', rec.employee_ids[0].id),
                  ('holiday_status_id.is_sick_leave', '=', False), ('holiday_status_id', '=', rec.holiday_status_id.id)])
@@ -159,7 +159,7 @@ class HRLeave(models.Model):
         if self.holiday_status_id.is_configurable:
             print('compute_non_repeated_leaves_total()', self.compute_non_repeated_leaves_total())
             print('balance type', self.holiday_status_id.balance_type)
-            # print('employee : ', self.employee_ids[0].name)
+            print('employee : ', self.employee_ids[0].name)
             if self.compute_non_repeated_leaves_total() >= 1 and self.holiday_status_id.balance_type != 'new_balance':
                 raise ValidationError('هذا الموظف قد قام بالفعل بأخذ إجازة من هذا النوع و هو لا يحق له أكثر من مرة')
             return True
@@ -260,7 +260,7 @@ class HRLeave(models.Model):
     @api.onchange('holiday_status_id', 'employee_ids')
     def _compute_employee_leaves(self):
         for rec in self:
-            if len(rec.employee_ids) >= 1:
+            if rec.employee_ids or rec.employee_id:
                 rec.employee_total_leaves = rec.employee_ids[0]._origin.total_sick_leaves
                 print('emp total')
                 print(rec.employee_ids[0]._origin.total_sick_leaves)
@@ -344,10 +344,9 @@ class HRLeave(models.Model):
     def action_validate(self):
         res = super().action_validate()
         matched = self.env['hr.work.entry'].search([('leave_id', '=', self.id)])
-        print('id : ', self.id, self._origin.id)
-        print('matched before for ', matched)
+        print('id : ', self.id)
         if self.id and matched:
-            print('matched work entries', matched)
+            print('matched work entries', )
             unusaldays = self.employee_id._get_unusual_days(self.date_from, self.date_to)
             print('unusual areee', unusaldays)
             dates = []
@@ -399,7 +398,7 @@ class HRLeave(models.Model):
                         'duration': 7,
                     })
                     new.write({
-                        'state': 'validated'
+                        'state': 'draft'
                     })
 
             # self.env['hr.work.entry'].search([('date_start', '=', )])
