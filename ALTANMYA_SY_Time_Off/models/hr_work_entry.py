@@ -30,7 +30,7 @@ class HrWorkEntry(models.Model):
             return super(models.Model, self).write(vals)
 
     @contextmanager
-    def _error_checking(self, start=None, stop=None, skip=False):
+    def _error_checking(self, start=None, stop=None, skip=False, employee_ids=False):
         """
         Context manager used for conflicts checking.
         When exiting the context manager, conflicts are checked
