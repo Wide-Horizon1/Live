@@ -258,26 +258,6 @@ class HRLeave(models.Model):
         #     self.check_matching_marital_status()
         return result
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        start_dates = [v.get('date_from') for v in vals_list if v.get('date_from')]
-        stop_dates = [v.get('date_to') for v in vals_list if v.get('date_to')]
-        if any(vals.get('holiday_type', 'employee') == 'employee' and not vals.get('multi_employee',
-                                                                                   False) and not vals.get(
-            'employee_id', False) for vals in vals_list):
-            raise ValidationError(
-                _("There is no employee set on the time off. Please make sure you're logged in the correct company."))
-        with self.env['hr.work.entry']._error_checking(start=min(start_dates, default=False),
-                                                       stop=max(stop_dates, default=False)):
-            return super(models.Model, self).create(vals_list)
-
-    def action_confirm(self):
-        start = min(self.mapped('date_from'), default=False)
-        stop = max(self.mapped('date_to'), default=False)
-        print('got here ', start, stop)
-        with self.env['hr.work.entry']._error_checking(start=start, stop=stop):
-            return super(models.Model, self).action_confirm()
-
     @api.onchange('holiday_status_id', 'employee_ids')
     def _compute_employee_leaves(self):
         for rec in self:
@@ -404,7 +384,7 @@ class HRLeave(models.Model):
                     year=end.year,
                     month=end.month,
                     day=end.day,
-                    hour=12,
+                    hour=14,
                     minute=0,
                 )
                 end_time_mod = datetime(
@@ -421,6 +401,12 @@ class HRLeave(models.Model):
                          ('work_entry_type_id.code', '=', 'HOLIDAY'),
                          ('employee_id', '=', work_entry.employee_id.id),
                          ('state', '=', 'draft')])
+                    # conflict_with_holiday = self.env['hr.work.entry'].search(
+                    #     [('date_start', '>=', start_time), ('date_stop', '<=', end_time_mod),
+                    #      ('employee_id', '=', work_entry.employee_id.id),
+                    #      ('state', '=', 'draft')])
+                    # for conflict in conflict_with_holiday:
+                    #     conflict.unlink()
                     print('conflict public holiday ', conflict_with_public_holiday)
                     if not conflict_with_public_holiday:
                         print('conflict_with_public_holiday ', conflict_with_public_holiday)
@@ -433,7 +419,7 @@ class HRLeave(models.Model):
                             'date_stop': end_time,
                             'leave_id': self.id,
                             'is_holiday_entry': True,
-                            'duration': 7,
+                            'duration': 9,
                         })
                         new.write({
                             'state': 'draft'
