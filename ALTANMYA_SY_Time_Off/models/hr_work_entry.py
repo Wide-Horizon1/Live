@@ -6,6 +6,8 @@ from psycopg2 import OperationalError
 
 from odoo import api, fields, models, tools, _
 
+from odoo.exceptions import ValidationError
+
 
 class HrWorkEntry(models.Model):
     _inherit = 'hr.work.entry'
@@ -26,6 +28,26 @@ class HrWorkEntry(models.Model):
 
         with self._error_checking(skip=skip_check):
             return super(models.Model, self).write(vals)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        start_dates = [v.get('date_from') for v in vals_list if v.get('date_from')]
+        stop_dates = [v.get('date_to') for v in vals_list if v.get('date_to')]
+        if any(vals.get('holiday_type', 'employee') == 'employee' and not vals.get('multi_employee',
+                                                                                   False) and not vals.get(
+                'employee_id', False) for vals in vals_list):
+            raise ValidationError(
+                _("There is no employee set on the time off. Please make sure you're logged in the correct company."))
+        with self.env['hr.work.entry']._error_checking(start=min(start_dates, default=False),
+                                                       stop=max(stop_dates, default=False)):
+            return super(models.Model, self).create(vals_list)
+
+    def action_confirm(self):
+        start = min(self.mapped('date_from'), default=False)
+        stop = max(self.mapped('date_to'), default=False)
+        print('got here ', start, stop)
+        with self.env['hr.work.entry']._error_checking(start=start, stop=stop):
+            return super(models.Model, self).action_confirm()
 
     @contextmanager
     def _error_checking(self, start=None, stop=None, skip=False):
