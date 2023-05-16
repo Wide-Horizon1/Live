@@ -235,13 +235,13 @@ class HRLeave(models.Model):
             return self.holiday_status_id.number_of_allowed_days
 
     # sick leaves
-    @api.model_create_multi
-    def create(self, vals_list):
-        holidays = super(HRLeave, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
-        print('vals list')
-        print(vals_list)
-        self.env['hr.employee'].search([('id', '=', vals_list[0]['employee_ids'][0][0])]).compute_total_leaves()
-        return holidays
+    # @api.model_create_multi
+    # def create(self, vals_list):
+    #     holidays = super(HRLeave, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
+    #     print('vals list')
+    #     print(vals_list)
+    #     self.env['hr.employee'].search([('id', '=', vals_list[0]['employee_ids'][0][0])]).compute_total_leaves()
+    #     return holidays
 
     def write(self, values):
         result = super(HRLeave, self).write(values)
@@ -257,6 +257,26 @@ class HRLeave(models.Model):
         #     self.check_matching_gender()
         #     self.check_matching_marital_status()
         return result
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        start_dates = [v.get('date_from') for v in vals_list if v.get('date_from')]
+        stop_dates = [v.get('date_to') for v in vals_list if v.get('date_to')]
+        if any(vals.get('holiday_type', 'employee') == 'employee' and not vals.get('multi_employee',
+                                                                                   False) and not vals.get(
+            'employee_id', False) for vals in vals_list):
+            raise ValidationError(
+                _("There is no employee set on the time off. Please make sure you're logged in the correct company."))
+        with self.env['hr.work.entry']._error_checking(start=min(start_dates, default=False),
+                                                       stop=max(stop_dates, default=False)):
+            return super(models.Model, self).create(vals_list)
+
+    def action_confirm(self):
+        start = min(self.mapped('date_from'), default=False)
+        stop = max(self.mapped('date_to'), default=False)
+        print('got here ', start, stop)
+        with self.env['hr.work.entry']._error_checking(start=start, stop=stop):
+            return super(models.Model, self).action_confirm()
 
     @api.onchange('holiday_status_id', 'employee_ids')
     def _compute_employee_leaves(self):
