@@ -63,7 +63,7 @@ class HrLeaveInh(models.Model):
                                                                              ('allocation_type', '=', 'accrual')])
                         m = allocation.get_total_invoked(holiday.request_date_from)
 
-                        holiday.possible_days = m + math.floor(leave_days['virtual_remaining_leaves'])
+                        holiday.possible_days = m + math.ceil(leave_days['virtual_remaining_leaves'])
                         print('self.possible_days..', holiday.possible_days)
                         print("leave_days['virtual_remaining_leaves']", leave_days['virtual_remaining_leaves'])
                         print('mvvv.m..', m)
