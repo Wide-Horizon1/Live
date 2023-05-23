@@ -23,7 +23,7 @@ _logger = logging.getLogger(__name__)
 class HR_alloction_scheduledEmpolyee(models.Model):
     _inherit = 'hr.employee'
 
-    time_of_type_em = fields.Many2one('hr.leave.type', required=True, string='time_of_type')
+    time_of_type_em = fields.Many2one('hr.leave.type',  string='time_of_type')
     accrual_plan_em = fields.Many2one('hr.leave.accrual.plan',
                                       domain="['|', ('time_off_type_id', '=', False), ('time_off_type_id', '=', time_of_type_em)]",
                                       string='accrual_plan')
@@ -67,8 +67,9 @@ class HR_alloction_scheduled(models.Model):
                         'number_of_days': 0,
                         'employee_id': rec.id,
                         'employee_ids': [(6, 0, [rec.id])],
-                        'state': 'confirm',
+                        'state': 'draft',
                         'date_from': rec.first_contract_date,
                     })
+                    new.action_confirm()
 
             print('new..', new)
