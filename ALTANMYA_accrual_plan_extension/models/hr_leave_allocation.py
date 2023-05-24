@@ -14,7 +14,7 @@ class HolidaysAllocation(models.Model):
     _description = "Time Off Allocation"
 
     is_grace_period_passed = fields.Boolean('Is grace period passed', default=True)
-    last_year_postponed_days = fields.Integer('Last year postponed days')
+    last_year_postponed_days = fields.Float('Last year postponed days')
 
     @api.model_create_multi
     def create(self, vals_list):
