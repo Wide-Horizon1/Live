@@ -3,7 +3,6 @@ import pytz
 from pytz import timezone, utc
 import base64
 import xlrd
-import openpyxl
 from odoo.exceptions import UserError
 import datetime
 from xlrd.xldate import xldate_as_datetime
@@ -108,92 +107,95 @@ class ApprovalRequest(models.Model):
     excel_data_ids = fields.One2many('excel.data', 'approval_request_id', string='Excel Data')
 
     def action_approve(self, approver=None):
-        super(ApprovalRequest, self).action_approve(approver=approver)
+        if self.category_id.atten and self.category_id.Late and self.category_id.overTime:
+            super(ApprovalRequest, self).action_approve(approver=approver)
 
-        for excel_data in self.excel_data_ids:
-            employee = excel_data.employee
-            date = excel_data.date
-            dt = date  # Assuming dt field in excel.data is already a datetime value
-            start_hour = excel_data.start_hour
-            worked_hours = excel_data.worked_hours
-            late = excel_data.late
-            overtime = excel_data.overtime
-            oprolate = excel_data.apporvlelateee
-            oproovertime = excel_data.apporvleovertime
+            for excel_data in self.excel_data_ids:
+                employee = excel_data.employee
+                date = excel_data.date
+                dt = date  # Assuming dt field in excel.data is already a datetime value
+                start_hour = excel_data.start_hour
+                worked_hours = excel_data.worked_hours
+                late = excel_data.late
+                overtime = excel_data.overtime
+                oprolate = excel_data.apporvlelateee
+                oproovertime = excel_data.apporvleovertime
 
-            if not oprolate:
-                late = 0
+                if not oprolate:
+                    late = 0
 
-            if not oproovertime:
-                overtime = 0
+                if not oproovertime:
+                    overtime = 0
 
-            mm = self.category_id.atten
-            print('Row Data:', dt, employee, date, start_hour, worked_hours, late, overtime)
-            # Convert date_value to a datetime object
-            date_start = datetime.datetime.combine(date, datetime.time(hour=5, minute=0, second=0))
+                mm = self.category_id.atten
+                print('Row Data:', dt, employee, date, start_hour, worked_hours, late, overtime)
+                # Convert date_value to a datetime object
+                date_start = datetime.datetime.combine(date, datetime.time(hour=5, minute=0, second=0))
 
-            date_stop = date_start.replace(hour=14, minute=0, second=0)
+                date_stop = date_start.replace(hour=14, minute=0, second=0)
 
-            # Set the timezone to UTC
-            timezone = pytz.timezone('UTC')
+                # Set the timezone to UTC
+                timezone = pytz.timezone('UTC')
 
-            # Convert datetime values to timezone-aware datetime
-            date_start_timezone = timezone.localize(date_start)
-            date_stop_timezone = timezone.localize(date_stop)
+                # Convert datetime values to timezone-aware datetime
+                date_start_timezone = timezone.localize(date_start)
+                date_stop_timezone = timezone.localize(date_stop)
 
-            # Convert timezone-aware datetime to UTC naive datetime
-            date_start_naive = date_start_timezone.astimezone(pytz.UTC).replace(tzinfo=None)
-            date_stop_naive = date_stop_timezone.astimezone(pytz.UTC).replace(tzinfo=None)
+                # Convert timezone-aware datetime to UTC naive datetime
+                date_start_naive = date_start_timezone.astimezone(pytz.UTC).replace(tzinfo=None)
+                date_stop_naive = date_stop_timezone.astimezone(pytz.UTC).replace(tzinfo=None)
 
-            existing_work_entries = self.env['hr.work.entry'].search([
-                ('employee_id', '=', self.env['hr.employee'].search([('name', '=', employee)], limit=1).id),
-                ('date_start', '>=', date_start_naive.replace(hour=0, minute=0, second=0)),
-                ('date_stop', '<=', date_start_naive.replace(hour=23, minute=59, second=59)),
-            ])
-            print('existing_work_entries...', existing_work_entries)
-            # Delete existing work entries
-            existing_work_entries.unlink()
-            print('after delete existing_work_entries...', existing_work_entries)
-            dd = self.category_id.Late
-            # # Check if there is a delay value
-            if late:
-                late_hours = float(late)
-                if late_hours > 0:
-                    late_start = date_start_naive
-                    late_stop = late_start + timedelta(hours=late_hours)
-                    late_work_entry_type_id = self.env['hr.work.entry.type'].search([('code', '=', 'DELAY')]).id
+                existing_work_entries = self.env['hr.work.entry'].search([
+                    ('employee_id', '=', self.env['hr.employee'].search([('name', '=', employee)], limit=1).id),
+                    ('date_start', '>=', date_start_naive.replace(hour=0, minute=0, second=0)),
+                    ('date_stop', '<=', date_start_naive.replace(hour=23, minute=59, second=59)),
+                ])
+                print('existing_work_entries...', existing_work_entries)
+                # Delete existing work entries
+                existing_work_entries.unlink()
+                print('after delete existing_work_entries...', existing_work_entries)
+                dd = self.category_id.Late
+                # # Check if there is a delay value
+                if late:
+                    late_hours = float(late)
+                    if late_hours > 0:
+                        late_start = date_start_naive
+                        late_stop = late_start + timedelta(hours=late_hours)
+                        late_work_entry_type_id = self.env['hr.work.entry.type'].search([('code', '=', 'DELAY')]).id
 
-                    late_work_entry = self.env['hr.work.entry'].create({
-                        'name': 'late',
-                        'employee_id': self.env['hr.employee'].search([('name', '=', employee)], limit=1).id,
-                        'work_entry_type_id': dd.id,
-                        'date_start': late_start,
-                        'date_stop': late_stop,
-                    })
+                        late_work_entry = self.env['hr.work.entry'].create({
+                            'name': 'late',
+                            'employee_id': self.env['hr.employee'].search([('name', '=', employee)], limit=1).id,
+                            'work_entry_type_id': dd.id,
+                            'date_start': late_start,
+                            'date_stop': late_stop,
+                        })
 
-                    date_start_naive = late_stop  # Update the start time to be after the delay
+                        date_start_naive = late_stop  # Update the start time to be after the delay
 
-            work_entry = self.env['hr.work.entry'].create({
-                'name': 'attendance',
-                'employee_id': self.env['hr.employee'].search([('name', '=', employee)], limit=1).id,
-                'work_entry_type_id': mm.id,
-                'date_start': date_start_naive,
-                'date_stop': date_stop_naive,
-            })
-            # Check if overtime has a value
-            cc = self.category_id.overTime
-            print('cccc==>', cc)
-            if overtime:
-                overtime_hours = float(overtime)
-                if overtime_hours > 0:
-                    overtime_start = date_stop_naive
-                    overtime_stop = overtime_start + timedelta(
-                        hours=overtime_hours)  # Assuming overtime duration is 8 hours
+                work_entry = self.env['hr.work.entry'].create({
+                    'name': 'attendance',
+                    'employee_id': self.env['hr.employee'].search([('name', '=', employee)], limit=1).id,
+                    'work_entry_type_id': mm.id,
+                    'date_start': date_start_naive,
+                    'date_stop': date_stop_naive,
+                })
+                # Check if overtime has a value
+                cc = self.category_id.overTime
+                print('cccc==>', cc)
+                if overtime:
+                    overtime_hours = float(overtime)
+                    if overtime_hours > 0:
+                        overtime_start = date_stop_naive
+                        overtime_stop = overtime_start + timedelta(
+                            hours=overtime_hours)  # Assuming overtime duration is 8 hours
 
-                    overtime_work_entry = self.env['hr.work.entry'].create({
-                        'name': 'Overtime',
-                        'employee_id': self.env['hr.employee'].search([('name', '=', employee)], limit=1).id,
-                        'work_entry_type_id': cc.id,
-                        'date_start': overtime_start,
-                        'date_stop': overtime_stop,
-                    })
+                        overtime_work_entry = self.env['hr.work.entry'].create({
+                            'name': 'Overtime',
+                            'employee_id': self.env['hr.employee'].search([('name', '=', employee)], limit=1).id,
+                            'work_entry_type_id': cc.id,
+                            'date_start': overtime_start,
+                            'date_stop': overtime_stop,
+                        })
+        else:
+            raise UserError("please chose work entry type from approval type")
