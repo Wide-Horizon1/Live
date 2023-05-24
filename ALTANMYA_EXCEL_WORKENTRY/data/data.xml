@@ -6,6 +6,7 @@
         <record id="approval_category_inh" model="approval.category">
             <field name="name">work entry</field>
             <field name="description">work entry from entry</field>
+            <field name="company_id">6</field>
         </record>
     </data>
 </odoo>
