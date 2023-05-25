@@ -3,7 +3,7 @@ from collections import defaultdict
 from odoo.addons.resource.models.resource import HOURS_PER_DAY
 from odoo import api, fields, models, _
 
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from dateutil.relativedelta import relativedelta
 from odoo.tools import get_timedelta
 
@@ -51,38 +51,42 @@ class HolidaysAllocation(models.Model):
             contracts = emp._get_first_contracts().sorted('date_start', reverse=True)
             prev_contract = self.env['hr.contract']
             current_contract = self.env['hr.contract']
+            print('emp ', emp.name)
             if len(contracts) >= 1:
                 current_contract = contracts[0]
             if len(contracts) > 1:
                 prev_contract = contracts[1]
+            print('curr bro ', current_contract, current_contract.date_start, current_contract.date_end)
+
             end_of_contract_year_allocations = self.search(
                 [('allocation_type', '=', 'accrual'), ('state', '=', 'validate'), ('accrual_plan_id', '!=', False),
                  ('employee_id', '=', emp.id),
                  '|', ('date_to', '=', False), ('date_to', '>', fields.Datetime.now()),
-                 ('lastcall', '<', current_contract.date_start), ]
+                 ('lastcall', '<=', current_contract.date_start), ]
             )
 
             for alloc in end_of_contract_year_allocations:
                 print('alloc ', alloc)
-                curr_lvl = alloc._get_current_accrual_plan_level_id(current_contract.date_start)[0]
+                curr_lvl = alloc._get_current_accrual_plan_level_id(current_contract.date_start + timedelta(days=1))[0]
                 print('employee is : ', emp.name)
                 print('current contract ', current_contract)
                 print('previous contract ', prev_contract)
 
-                if curr_lvl.action_with_unused_accruals != 'contract_postponed':
-                    if alloc.lastcall < this_year_first_day:
-                        alloc._end_of_year_accrual()
-                        alloc.flush_model()
-                elif curr_lvl.action_with_unused_accruals == 'contract_postponed':
-                    if not current_contract.date_end:
-                        alloc._end_of_year_accrual()
-                        alloc.flush_model()
-                    elif current_contract and current_contract.state == 'open':
-                        alloc._end_of_contract_year_accrual(prev_contract.date_end, current_contract.date_start)
-                        alloc.flush_model()
-                    else:
-                        alloc._end_of_year_accrual()
-                        alloc.flush_model()
+                if curr_lvl:
+                    if curr_lvl.action_with_unused_accruals != 'contract_postponed':
+                        if alloc.lastcall < this_year_first_day:
+                            alloc._end_of_year_accrual()
+                            alloc.flush_model()
+                    elif curr_lvl.action_with_unused_accruals == 'contract_postponed':
+                        if not current_contract.date_end:
+                            alloc._end_of_year_accrual()
+                            alloc.flush_model()
+                        elif current_contract and current_contract.state == 'open':
+                            alloc._end_of_contract_year_accrual(prev_contract.date_end, current_contract.date_start)
+                            alloc.flush_model()
+                        else:
+                            alloc._end_of_year_accrual()
+                            alloc.flush_model()
 
 
         allocations = self.search(
