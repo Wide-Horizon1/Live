@@ -196,7 +196,10 @@ class HolidaysAllocation(models.Model):
                         if current_level.action_with_unused_accruals == 'contract_postponed':
                             contracts = allocation.employee_id._get_first_contracts().sorted('date_start', reverse=True)
                             if len(contracts) >= 1:
-                                number_of_days_since_the_start_of_year = today.date() - contracts[0].date_start
+                                if not contracts[0].date_end:
+                                    number_of_days_since_the_start_of_year = today - first_day_this_year
+                                else:
+                                    number_of_days_since_the_start_of_year = today.date() - contracts[0].date_start
                         print('dddddddd : ', number_of_days_since_the_start_of_year.days)
                         if grace_period_in_days < number_of_days_since_the_start_of_year.days:
                             employee_days_per_allocation = allocation.holiday_status_id._get_employees_days_per_allocation_in_this_year(
