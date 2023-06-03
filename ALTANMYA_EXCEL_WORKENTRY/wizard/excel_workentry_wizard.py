@@ -144,9 +144,11 @@ class ApprovalRequest(models.Model):
                 # Convert timezone-aware datetime to UTC naive datetime
                 date_start_naive = date_start_timezone.astimezone(pytz.UTC).replace(tzinfo=None)
                 date_stop_naive = date_stop_timezone.astimezone(pytz.UTC).replace(tzinfo=None)
-
+                print('00000000=>',employee.split('.')[0])
                 existing_work_entries = self.env['hr.work.entry'].search([
-                    ('employee_id', '=', self.env['hr.employee'].search([('name', '=', employee)], limit=1).id),
+                    ('employee_id', '=',
+                     self.env['hr.employee'].search(['|', ('name', '=', employee), ('registration_number', '=', employee.split('.')[0])],
+                                                    limit=1).id),
                     ('date_start', '>=', date_start_naive.replace(hour=0, minute=0, second=0)),
                     ('date_stop', '<=', date_start_naive.replace(hour=23, minute=59, second=59)),
                 ])
@@ -162,26 +164,55 @@ class ApprovalRequest(models.Model):
                         late_start = date_start_naive
                         late_stop = late_start + timedelta(hours=late_hours)
                         late_work_entry_type_id = self.env['hr.work.entry.type'].search([('code', '=', 'DELAY')]).id
-
+                        print('asdasdasd==>', type(employee))
+                        res = ""
+                        for c in employee:
+                            if c != ".":
+                                res += c
+                            else:
+                                break
+                        print(' res ', res)
+                        employee_domain = ['|', ('name', '=', employee),
+                                           ('registration_number', '=', res)]
+                        employee_record = self.env['hr.employee'].search(employee_domain, limit=1)
+                        print(' employee_domain..==>', employee_domain)
+                        print('employee_record..==>', employee_record)
                         late_work_entry = self.env['hr.work.entry'].create({
                             'name': 'late',
-                            'employee_id': self.env['hr.employee'].search([('name', '=', employee)], limit=1).id,
+                            'employee_id': employee_record.id,
                             'work_entry_type_id': dd.id,
                             'date_start': late_start,
                             'date_stop': late_stop,
                         })
 
                         date_start_naive = late_stop  # Update the start time to be after the delay
-
+                res = ""
+                for c in employee:
+                    if c != ".":
+                        res += c
+                    else:
+                        break
+                print(' res ', res)
+                employee_domain = ['|', ('name', '=', employee), ('registration_number', '=', res)]
+                employee_record = self.env['hr.employee'].search(employee_domain, limit=1)
+                print('2employee_domain..==>', employee_domain)
+                print('2employee_record..==>', employee_record)
                 work_entry = self.env['hr.work.entry'].create({
                     'name': 'attendance',
-                    'employee_id': self.env['hr.employee'].search([('name', '=', employee)], limit=1).id,
+                    'employee_id': employee_record.id,
                     'work_entry_type_id': mm.id,
                     'date_start': date_start_naive,
                     'date_stop': date_stop_naive,
                 })
                 # Check if overtime has a value
                 cc = self.category_id.overTime
+                res = ""
+                for c in employee:
+                    if c != ".":
+                        res += c
+                    else:
+                        break
+
                 print('cccc==>', cc)
                 if overtime:
                     overtime_hours = float(overtime)
@@ -189,10 +220,14 @@ class ApprovalRequest(models.Model):
                         overtime_start = date_stop_naive
                         overtime_stop = overtime_start + timedelta(
                             hours=overtime_hours)  # Assuming overtime duration is 8 hours
-
+                        employee_domain = ['|', ('name', '=', employee),
+                                           ('registration_number', '=', res)]
+                        employee_record = self.env['hr.employee'].search(employee_domain, limit=1)
+                        print('3employee_domain..==>', employee_domain)
+                        print('3employee_record..==>', employee_record)
                         overtime_work_entry = self.env['hr.work.entry'].create({
                             'name': 'Overtime',
-                            'employee_id': self.env['hr.employee'].search([('name', '=', employee)], limit=1).id,
+                            'employee_id': employee_record.id,
                             'work_entry_type_id': cc.id,
                             'date_start': overtime_start,
                             'date_stop': overtime_stop,
