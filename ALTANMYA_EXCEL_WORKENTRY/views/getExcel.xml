@@ -24,29 +24,7 @@
         </field>
     </record>
 
-    <record id="excel_approval" model="ir.ui.view">
-        <field name="name">approval.request</field>
-        <field name="model">approval.request</field>
-        <field name="inherit_id" ref="approvals.approval_request_view_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//page[3]" position="after">
-                <page string="Show Excel" name="show_excel">
-                <field name="excel_data_ids" widget="one2many_list">
-                    <tree >
-                        <field name="employee" string="Employee"/>
-                        <field name="date" string="Date"/>
-                        <field name="start_hour" string="Start Hour"/>
-                        <field name="worked_hours" string="Worked Hours"/>
-                        <field name="late" string="Late"/>
-                        <field name="overtime" string="Overtime"/>
-                        <field name="apporvlelateee" string="Approved"/>
-                        <field name="apporvleovertime" string="Approved"/>
-                    </tree>
-                </field>
-            </page>
-            </xpath>
-        </field>
-    </record>
+
 
 
      <record id="excel_approval_category" model="ir.ui.view">
@@ -58,6 +36,9 @@
                  <field name="atten" string="Chose Attendance"/>
                  <field name="overTime" string="Chose OverTime"/>
                  <field name="Late" string="Chose Late"/>
+                 <field name="Max" string="Working hours are 8 hours maximum"/>
+                 <field name="start_d" attrs="{'invisible': [('Max', '=', False)]}"/>
+                 <field name="end_d"  attrs="{'invisible': [('Max', '=', False)]}"/>
             </xpath>
         </field>
     </record>
