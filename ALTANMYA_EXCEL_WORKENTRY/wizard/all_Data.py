@@ -4,6 +4,8 @@ import pytz
 from pytz import timezone, utc
 import base64
 import xlrd
+
+import calendar
 from odoo.exceptions import UserError, ValidationError
 import datetime
 from xlrd.xldate import xldate_as_datetime
@@ -19,7 +21,7 @@ class SendData(models.Model):
     name = fields.Char(string='name')
     department = fields.Char(string='department')
     working_days = fields.Char(string='working days')
-    absence = fields.Char(string='absence')
+    absence = fields.Integer(string='absence')
     late = fields.Char(string='late')
     overTime = fields.Char(string='overTime')
 
@@ -142,11 +144,12 @@ class AllData(models.TransientModel):
                 ###
         else:
             raise ValidationError("there are no record in this data!")
-        
+
         for data in filtered_data:
             data.write({
                 'approval_request_id': approval_request.id,
             })
+
 
         for partner_id, late_duration in sumlate.items():
             total_seconds = late_duration.total_seconds()
@@ -158,13 +161,20 @@ class AllData(models.TransientModel):
             registration_number = res.registration_number
             dep = res.department_id.name
 
+            year = date_from.year  # Assuming date_from is a valid date object
+            month = date_from.month
+            num_days_in_month = calendar.monthrange(year, month)[1]
+
+            # working_days = working_days[partner_id]
+            absence_days = num_days_in_month - working_days[partner_id]
+            print('absence_days==',absence_days)
             self.env['send.data'].create({
                 'approval_request_id': approval_request.id,
                 'emploey_id': registration_number,
                 'name': partner_id,  # Replace with the appropriate field from excel_record
                 'department': dep,  # Replace with the appropriate field from excel_record
                 'working_days': working_days[partner_id],  # Replace with the appropriate field from excel_record
-                'absence': '0323',  # Replace with the appropriate field from excel_record
+                'absence': absence_days,  # Replace with the appropriate field from excel_record
                 'late': formatted_duration,
                 'overTime': sumovertime[partner_id],
             })

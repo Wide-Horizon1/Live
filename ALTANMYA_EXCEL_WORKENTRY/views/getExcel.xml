@@ -33,12 +33,16 @@
         <field name="inherit_id" ref="approvals.approval_category_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet[1]/group[1]/field[1]" position="after">
-                 <field name="atten" string="Chose Attendance"/>
-                 <field name="overTime" string="Chose OverTime"/>
-                 <field name="Late" string="Chose Late"/>
-                 <field name="Max" string="Working hours are 8 hours maximum"/>
-                 <field name="start_d" attrs="{'invisible': [('Max', '=', False)]}"/>
-                 <field name="end_d"  attrs="{'invisible': [('Max', '=', False)]}"/>
+                 <field name="check_work_entry" string="Working Entry"/>
+                 <field name="atten" string="Chose Attendance" attrs="{'invisible': [('check_work_entry', '=', False)]}"/>
+                 <field name="overTime" string="Chose OverTime" attrs="{'invisible': [('check_work_entry', '=', False)]}"/>
+                 <field name="Late" string="Chose Late" attrs="{'invisible': [('check_work_entry', '=', False)]}"/>
+                 <field name="Max" string="Working hours are 8 hours maximum" attrs="{'invisible': [('check_work_entry', '=', False)]}"/>
+                 <field name="start_d" attrs="{'invisible': ['|',('Max', '=', False), ('check_work_entry', '=', False)]}"/>
+                 <field name="end_d"  attrs="{'invisible': ['|',('Max', '=', False), ('check_work_entry', '=', False)]}"/>
+                 <field name="Break" string="Break hours At" attrs="{'invisible': [('check_work_entry', '=', False)]}"/>
+                 <field name="start_break" attrs="{'invisible': ['|',('Break', '=', False), ('check_work_entry', '=', False)]}"/>
+                 <field name="end_break"  attrs="{'invisible': ['|',('Break', '=', False), ('check_work_entry', '=', False)]}"/>
             </xpath>
         </field>
     </record>

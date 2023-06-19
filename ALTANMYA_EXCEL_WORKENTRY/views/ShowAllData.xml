@@ -33,12 +33,12 @@
                 <field name="all_data_ids" widget="one2many_list">
                     <tree >
                         <field name="emploey_id" string="Employee"/>
-                        <field name="name" string="Date"/>
-                        <field name="department" string="Start Hour"/>
-                        <field name="working_days" string="End Hours"/>
-                        <field name="absence" string="Late"/>
-                        <field name="late" string="Overtime"/>
-                        <field name="overTime" string="Approved"/>
+                        <field name="name" string="name"/>
+                        <field name="department" string="department"/>
+                        <field name="working_days" string="working_days"/>
+                        <field name="absence" string="absence"/>
+                        <field name="late" string="late"/>
+                        <field name="overTime" string="overTime"/>
                     </tree>
                 </field>
             </page>

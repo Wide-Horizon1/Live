@@ -11,13 +11,17 @@ from datetime import timedelta
 
 class ApprovalCategory(models.Model):
     _inherit = 'approval.category'
+
+    check_work_entry = fields.Boolean(default=False, string='Working Entry')
     overTime = fields.Many2one('hr.work.entry.type')
     Late = fields.Many2one('hr.work.entry.type')
     atten = fields.Many2one('hr.work.entry.type')
     Max = fields.Boolean(default=True, string='Working hours are 8 hours maximum')
     start_d = fields.Char(string='Work starts at:', default='08:00')
     end_d = fields.Char(string='Work ends at:', default='17:00')
-
+    Break = fields.Boolean(default=True, string='Break hours At :')
+    start_break = fields.Char(string='Work break at:', default='12:00')
+    end_break = fields.Char(string='Work break at:', default='13:00')
 
 class ExcelData(models.Model):
     _name = 'excel.data'
@@ -404,6 +408,7 @@ class ApprovalRequest(models.Model):
                     overtime_hours = float(overtime)
                     if overtime_hours > 0:
                         print("timedelta(hours=overtime_hours) ", timedelta(hours=overtime_hours))
+                        print("date_stop_naive) ", date_stop_naive)
                         overtime_start = date_stop_naive
                         overtime_stop = overtime_start + timedelta(
                             hours=overtime_hours)  # Assuming overtime duration is 8 hours
@@ -416,7 +421,7 @@ class ApprovalRequest(models.Model):
                             'name': 'Overtime',
                             'employee_id': employee_record.id,
                             'work_entry_type_id': cc.id,
-                            'date_start': overtime_start,
+                            'date_start': formatted_end_hours_input,
                             'date_stop': overtime_stop,
                         })
         else:
