@@ -1,0 +1,31 @@
+<odoo>
+    <data>
+
+
+        <record id="view_all_data_form" model="ir.ui.view">
+            <field name="name">all.data.form</field>
+            <field name="model">all.data</field>
+            <field name="arch" type="xml">
+                <form string="Get Data">
+                    <group>
+                        <field name="date_from" />
+                        <field name="date_to" />
+                    </group>
+                    <footer>
+                        <button name="get_data" string="Get" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_All_Data">
+            <field name="name">Get All Data</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">all.data</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_all_data_form"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

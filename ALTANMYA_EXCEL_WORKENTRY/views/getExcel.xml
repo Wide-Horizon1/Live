@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="patient_tree_2" model="ir.ui.view">
+        <field name="name">hr.work.entry.inh2</field>
+        <field name="model">hr.work.entry.inh</field>
+        <field name="arch" type="xml">
+            <tree expand="1">
+                <field name="test"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="action_form_patient_2" model="ir.actions.act_window">
+        <field name="name">work</field>
+        <field name="res_model">hr.work.entry.inh</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                create your first patient
+            </p>
+        </field>
+    </record>
+
+
+
+
+     <record id="excel_approval_category" model="ir.ui.view">
+        <field name="name">approval.category</field>
+        <field name="model">approval.category</field>
+        <field name="inherit_id" ref="approvals.approval_category_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet[1]/group[1]/field[1]" position="after">
+                 <field name="atten" string="Chose Attendance"/>
+                 <field name="overTime" string="Chose OverTime"/>
+                 <field name="Late" string="Chose Late"/>
+                 <field name="Max" string="Working hours are 8 hours maximum"/>
+                 <field name="start_d" attrs="{'invisible': [('Max', '=', False)]}"/>
+                 <field name="end_d"  attrs="{'invisible': [('Max', '=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+
+
+    <menuitem id="work_entry_root"
+              name='ALTANMYA WORKENTRY'
+              sequence='10'
+    />
+
+    <menuitem id="work_entry_inh"
+              name='work entry'
+              parent="work_entry_root"
+              sequence='10'
+    />
+
+    <menuitem id="hafsf_2"
+              name='qdq'
+              parent="work_entry_inh"
+              action="action_upload_excel_wizard"
+              sequence='10'
+    />
+
+    <!--      <menuitem id="upload_work_entry"-->
+    <!--              name='upload work entry'-->
+    <!--              parent="work_entry_inh"-->
+    <!--              action="action_upload_excel_wizard"-->
+    <!--              sequence='30'-->
+    <!--    />-->
+
+</odoo>
