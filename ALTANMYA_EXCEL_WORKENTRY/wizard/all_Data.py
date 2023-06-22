@@ -13,6 +13,36 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
 
+class ShowDetailsData(models.Model):
+    _name = 'show.details'
+    _description = 'All Details Data'
+
+    approval_request_id = fields.Many2one('approval.request')
+    employee = fields.Char(string='Employee', readonly=True)
+    date = fields.Date(string='Date', readonly=True)
+    start_hour = fields.Char(string='Start Hour', readonly=True)
+    end_hours = fields.Char(string='End Hours', readonly=True)
+    late = fields.Char(string='Late')
+    overtime = fields.Float(string='Overtime')
+    apporvlelateee = fields.Boolean(default=True, string='Approval Late')
+    apporvleovertime = fields.Boolean(default=True, string='Approval OverTime')
+
+
+class SendData(models.Model):
+    _name = 'show.data'
+
+    approval_request_id = fields.Many2one('approval.request')
+    emploey_id = fields.Char(string='id')
+    name = fields.Char(string='name')
+    department = fields.Char(string='department')
+    working_days = fields.Char(string='working days')
+    absence = fields.Integer(string='absence')
+    late = fields.Char(string='late')
+    overTime = fields.Char(string='overTime')
+    date_from = fields.Date('From')
+    date_to = fields.Date('To')
+
+
 class SendData(models.Model):
     _name = 'send.data'
 
@@ -29,6 +59,20 @@ class SendData(models.Model):
         print('sd')
 
 
+class ApprovalRequest(models.Model):
+    _inherit = 'approval.request'
+
+    ...
+
+    def unlink(self):
+        for request in self:
+            show_data_records = self.env['show.data'].search([('approval_request_id', '=', request.id)])
+            show_data_records.unlink()
+            show_details_records = self.env['show.details'].search([('approval_request_id', '=', request.id)])
+            show_details_records.unlink()
+        return super(ApprovalRequest, self).unlink()
+
+
 class AllData(models.TransientModel):
     _name = 'all.data'
 
@@ -36,7 +80,7 @@ class AllData(models.TransientModel):
     date_to = fields.Date('To')
 
     def get_data(self):
-        self.env.cr.execute('TRUNCATE send_data')
+        # self.env.cr.execute('TRUNCATE send_data')
         date_from = self.date_from
         date_to = self.date_to
         print('Date From:', date_from)
@@ -116,14 +160,14 @@ class AllData(models.TransientModel):
         existing_request = self.env['approval.request'].search([
             ('date_to', '>=', date_from),  # Check if existing request end date is after or on the selected start date
             ('date_from', '<=', date_to),  # Check if existing request start date is before or on the selected end date
-        ])
+        ], limit=1)
 
-        print('date_from',type(date_from))
-        print('date_to',type(date_to))
+        print('date_from', type(date_from))
+        print('date_to', type(date_to))
 
+        print('Existing Requests:', existing_request)
         if filtered_data:
-            print('Existing Requests:', existing_request)
-            if existing_request:
+            if existing_request.request_status == 'new' or existing_request.request_status == 'pending' or existing_request.request_status == 'approved':
                 # An approval request already exists for the selected date
                 # You can raise an error or handle it based on your requirements
                 raise ValidationError("An approval request already exists for this date")
@@ -146,10 +190,21 @@ class AllData(models.TransientModel):
             raise ValidationError("there are no record in this data!")
 
         for data in filtered_data:
+            print('data==>', data)
             data.write({
                 'approval_request_id': approval_request.id,
             })
-
+            self.env['show.details'].create({
+                'approval_request_id': approval_request.id,
+                'employee': data.employee,
+                'date': data.date,  # Replace with the appropriate field from excel_record
+                'start_hour': data.start_hour,  # Replace with the appropriate field from excel_record
+                'end_hours': data.end_hours,  # Replace with the appropriate field from excel_record
+                'late': data.late,  # Replace with the appropriate field from excel_record
+                'overtime': data.overtime,
+                'apporvlelateee': data.apporvlelateee,
+                'apporvleovertime': data.apporvleovertime,
+            })
 
         for partner_id, late_duration in sumlate.items():
             total_seconds = late_duration.total_seconds()
@@ -167,8 +222,19 @@ class AllData(models.TransientModel):
 
             # working_days = working_days[partner_id]
             absence_days = num_days_in_month - working_days[partner_id]
-            print('absence_days==',absence_days)
+            print('absence_days==', absence_days)
             self.env['send.data'].create({
+                'approval_request_id': approval_request.id,
+                'emploey_id': registration_number,
+                'name': partner_id,  # Replace with the appropriate field from excel_record
+                'department': dep,  # Replace with the appropriate field from excel_record
+                'working_days': working_days[partner_id],  # Replace with the appropriate field from excel_record
+                'absence': absence_days,  # Replace with the appropriate field from excel_record
+                'late': formatted_duration,
+                'overTime': sumovertime[partner_id],
+            })
+
+            self.env['show.data'].create({
                 'approval_request_id': approval_request.id,
                 'emploey_id': registration_number,
                 'name': partner_id,  # Replace with the appropriate field from excel_record
@@ -183,5 +249,6 @@ class AllData(models.TransientModel):
             #     record.approval_request_id = approval_request.id
             #
             # print('approval_request..', approval_request)
-
+        #     action = self.env.ref('ALTANMYA_EXCEL_WORKENTRY.action_get_all_data').read()[0]
+        # return action
         # return approval_request
