@@ -37,6 +37,10 @@
                  <field name="atten" string="Chose Attendance" attrs="{'invisible': [('check_work_entry', '=', False)]}"/>
                  <field name="overTime" string="Chose OverTime" attrs="{'invisible': [('check_work_entry', '=', False)]}"/>
                  <field name="Late" string="Chose Late" attrs="{'invisible': [('check_work_entry', '=', False)]}"/>
+                 <field name="Get_out_early" string="Chose out" attrs="{'invisible': [('check_work_entry', '=', False)]}"/>
+                 <field name="Show_out_early" string="Show out early" attrs="{'invisible': [('check_work_entry', '=', False)]}"/>
+                 <field name="actual_working_hours" string="actual working hours" attrs="{'invisible': [('check_work_entry', '=', False)]}"/>
+                 <field name="day_start" string="Day Start At" attrs="{'invisible': [('check_work_entry', '=', False)]}"/>
                  <field name="Max" string="Working hours are 8 hours maximum" attrs="{'invisible': [('check_work_entry', '=', False)]}"/>
                  <field name="start_d" attrs="{'invisible': ['|',('Max', '=', False), ('check_work_entry', '=', False)]}"/>
                  <field name="end_d"  attrs="{'invisible': ['|',('Max', '=', False), ('check_work_entry', '=', False)]}"/>

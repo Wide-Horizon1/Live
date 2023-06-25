@@ -4,3 +4,5 @@ access_work_entry_inh_wizard,access.work.entry.inh.wizard,model_work_entry_inh_w
 access_excel_data,access.excel.data,model_excel_data,,1,1,1,1
 access_all_data,access.all.data,model_all_data,,1,1,1,1
 access_send_data,access.send.data,model_send_data,,1,1,1,1
+access_show_data,access.show.data,model_show_data,,1,1,1,1
+access_show_details,access.show.details,model_show_details,,1,1,1,1
