@@ -3,7 +3,7 @@
         <data >
              <record id="work_entry_type_CT_ERLYIN2" model="hr.work.entry.type">
                 <field name="name">early enter2</field>
-                <field name="code">ERLYIN22</field>
+                <field name="code">ERLYIN2</field>
                 <field name="sequence">113</field>
                 <field name="is_leave">False</field>
                 <field name="round_days">NO</field>
