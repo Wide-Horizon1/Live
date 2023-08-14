@@ -7,7 +7,8 @@
     'depends': [
         'account_accountant',
         'hr_contract_salary',
-        'hr_payroll'],
+        'hr_payroll',
+        'report_xlsx',],
     'data': [
         'security/ir.model.access.csv',
         'wizards/create_excel_wizard.xml',
