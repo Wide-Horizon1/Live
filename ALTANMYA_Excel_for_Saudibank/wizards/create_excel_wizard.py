@@ -6,8 +6,8 @@ class Createexcelwizard(models.TransientModel):
     _name = "create.excel.wizard"  # name of Table
     _description = "Create Excel Wizard"
 
-    emp_info_id = fields.Many2one('employee.info', string='Employee Info')
-    payslips_batch_id = fields.Many2one('hr.payslip.run', string='Payslips Batches')
+    emp_info_id = fields.Many2one('employee.info', string='Employee Info',required=True)
+    payslips_batch_id = fields.Many2one('hr.payslip.run', string='Payslips Batches',required=True)
 
     def print_payroll_excel(self):
         print("payrol")

@@ -48,7 +48,7 @@
         <field name="name">employee.info.tree</field>
         <field name="model">employee.info</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree js_class="generate_excel_list">
 
                 <field name="type"/>
             </tree>
@@ -58,10 +58,21 @@
 
     <menuitem
             id="menu_employee"
-            name="Employee Info"
+            name="Excel Sheet  "
             parent="hr.menu_hr_employee_payroll"
+            sequence="10"/>
+    <menuitem
+            id="menu_excel_sheet"
+            name="Excel Sheet Type "
+            parent="menu_employee"
             action="action_menu_info"
             sequence="10"/>
+    <menuitem
+            id="menu_open_wizard"
+            name="Open Excel Sheet"
+            parent="menu_employee"
+            action="ALTANMYA_Excel_for_Saudibank.action_create_excel"
+            sequence="12"/>
 
 
 </odoo>

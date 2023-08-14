@@ -1,6 +1,9 @@
 from odoo import models
 import base64
 import io
+import logging
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ExcelPayrollXlsx(models.AbstractModel):
@@ -93,6 +96,8 @@ class ExcelPayrollXlsx(models.AbstractModel):
             # for field_name in bank_info_record:
             sheet.write_row(row, col, row_data, border_format)
             row += 1
+        _LOGGER.info(" row data ")
+        _LOGGER.info(row_data)
 
         for col, field_name in enumerate(fields_to_include_third_row):
             sheet.write(2, col, field_name.capitalize(), format_1)
