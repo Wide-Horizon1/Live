@@ -73,7 +73,8 @@ class ExcelPayrollXlsx(models.AbstractModel):
         for col, field_name in enumerate(fields_to_include):
             sheet.set_column(col, col, len(field_name)+2)
 
-
+        _LOGGER.info(" row data ")
+        _LOGGER.info(data['rec1'])
         row = 1
         for emp_info_record in data['rec1']:
             emp_info = self.env['employee.info'].browse(emp_info_record)
@@ -96,8 +97,7 @@ class ExcelPayrollXlsx(models.AbstractModel):
             # for field_name in bank_info_record:
             sheet.write_row(row, col, row_data, border_format)
             row += 1
-        _LOGGER.info(" row data ")
-        _LOGGER.info(row_data)
+
 
         for col, field_name in enumerate(fields_to_include_third_row):
             sheet.write(2, col, field_name.capitalize(), format_1)
