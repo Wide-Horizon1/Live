@@ -1,12 +1,7 @@
-from datetime import date
-
 from odoo import models
 import base64
 import io
 import logging
-from server.odoo.tools.safe_eval import datetime, time
-import _strptime
-
 _LOGGER = logging.getLogger(__name__)
 
 
