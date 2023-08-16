@@ -51,15 +51,6 @@
             <tree js_class="generate_excel_list">
 
                 <field name="type"/>
-                <field name="name"/>
-                <field name="agreement_code"/>
-                <field name="finance_account"/>
-                <field name="num_of_section"/>
-                <field name="num_of_facilityin_in_office"/>
-                <field name="num_of_facilityin_in_commerce"/>
-                <field name="bank_code"/>
-                <field name="currency"/>
-                <field name="file_reference"/>
             </tree>
         </field>
     </record>
