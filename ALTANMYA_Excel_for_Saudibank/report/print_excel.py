@@ -135,6 +135,7 @@ class ExcelPayrollXlsx(models.AbstractModel):
                     'allowances': 0.0,
                     'deductions': 0.0,
                     'state': 'inactive',
+                    'currency': 'SAR',
                     'empty':''
                 }
         print('agg ', aggregated_data)
@@ -161,6 +162,7 @@ class ExcelPayrollXlsx(models.AbstractModel):
                 aggregated_data[employee_id]['allowances'] += payslip.allowances
                 aggregated_data[employee_id]['deductions'] += payslip.deductions
                 aggregated_data[employee_id]['state'] = 'active'
+                aggregated_data[employee_id]['currency'] = 'SAR'
                 aggregated_data[employee_id]['empty'] = ''
         print("aggregated", aggregated_data)
 
@@ -181,7 +183,7 @@ class ExcelPayrollXlsx(models.AbstractModel):
                 emp_data['allowances'],
                 emp_data['deductions'],
                 emp_data['empty'],
-                emp_info['currency'].name,
+                emp_data['currency'],
                 emp_data['state'],
             ]
             sheet.write_row(row, col, row_data, border_format)
