@@ -77,6 +77,7 @@ class ExcelPayrollXlsx(models.AbstractModel):
         _LOGGER.info(data['rec1'])
         row = 1
         due_date = data.get('due_date', False)
+        currency = data.get('currency', False)
         # print("date ", type(due_date))
         # print("date ", type(due_date))
         # formatted_due_date = datetime.strptime(due_date, '%Y-%M-%d')
@@ -88,27 +89,41 @@ class ExcelPayrollXlsx(models.AbstractModel):
 
 
         for emp_info_record in data['rec1']:
+            emp_info_ids = ','.join(map(str, data['rec1']))
+            query = f"""
+                SELECT *
+                FROM employee_info 
+                WHERE id IN ({emp_info_ids})
+            """
+            queryyy=self.env.cr.execute(query)
+            print("Excute  ", queryyy)
+            header_list = self.env.cr.dictfetchall()
+            print("my query 2 ", header_list)
             emp_info = self.env['employee.info'].browse(emp_info_record)
+            print("emp_info",emp_info)
             if emp_info_id and emp_info_id != emp_info_record['id']:
                 continue
             col = 0
-            row_data = [
-                emp_info.type,
-                emp_info.name,
-                emp_info.agreement_code,
-                emp_info.finance_account,
-                emp_info.num_of_section,
-                due_date,
-                emp_info.num_of_facilityin_in_office,
-                emp_info.num_of_facilityin_in_commerce,
-                emp_info.bank_code,
-                emp_info.currency.name,
-                batch_num,
-                # curency[0],
-            ]
+            for header_data in header_list :
+                row_data = [
+                    header_data['type'],
+                    header_data['name'],
+                    header_data['agreement_code'],
+                    header_data['finance_account'],
+                    header_data['num_of_section'],
+                    due_date,
+                    header_data['num_of_facilityin_in_office'],
+                    header_data['num_of_facilityin_in_commerce'],
+                    header_data['bank_code'],
+                    currency,
+                    batch_num,
+                ]
+                sheet.write_row(row, col, row_data, border_format)
+                row += 1
+
+
             # for field_name in bank_info_record:
-            sheet.write_row(row, col, row_data, border_format)
-            row += 1
+
 
 
         for col, field_name in enumerate(fields_to_include_third_row):

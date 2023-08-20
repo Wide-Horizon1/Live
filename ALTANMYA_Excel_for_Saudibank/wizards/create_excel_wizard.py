@@ -49,7 +49,6 @@ class Createexcelwizard(models.TransientModel):
             domain2 = [('id', '=', emp_info_id.id)]
             domain3 = [('emp_Info', '=', emp_info_id.id)]
 
-        # payslips_batch_id = self.paayslips_batch_id
         recc1 = self.env['hr.employee'].search(domain2)
         recc = self.env['hr.employee'].search(domain3)
         forpayslips = self.env['hr.employee'].search(domain3)
@@ -60,6 +59,9 @@ class Createexcelwizard(models.TransientModel):
         temp = self.env['hr.payslip'].search_read([('id', 'in', x.ids)])
         print("rec", recc, temp)
         print("datttttee", self.due_date)
+        currency_name = self.emp_info_id.currency.name
+        print("currency",currency_name)
+
         date = str(self.due_date.day) + '-' + str(self.due_date.month) + '-' + str(self.due_date.year)
         data = {
             'rec': [emp.id for emp in recc],
@@ -68,6 +70,7 @@ class Createexcelwizard(models.TransientModel):
             'temp': temp,
             'due_date': date,
             'batch_num': self.batch_num,
+            'currency': currency_name,
         }
 
         report = self.env.ref('ALTANMYA_Excel_for_Saudibank.report_payroll_card_xls')
