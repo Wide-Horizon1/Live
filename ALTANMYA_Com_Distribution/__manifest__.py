@@ -11,5 +11,7 @@
         'data/cron_action.xml',
         'views/Accounting_menu.xml',
 
-    ]
+    ],
+    'license': 'LGPL-3',
+
 }

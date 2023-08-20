@@ -4,9 +4,13 @@ from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
+import logging
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class CompanyDis(models.Model):
+
     _name = "companies.disturubition"  # name of Table
     _inherit = 'mail.thread'
 
@@ -42,7 +46,6 @@ class CompanyDis(models.Model):
     or_date = fields.Date(
         string='Original Date',
 
-
     )
 
     # def _get_inserted_date(self):
@@ -63,6 +66,8 @@ class CompanyDis(models.Model):
         for record in self:
             total_tax = sum(record.company_ids.mapped('rate'))
             record.total_rate = total_tax
+
+
 
     @api.constrains('total_rate')
     def _check_total_rate(self):
@@ -89,7 +94,7 @@ class CompanyDis(models.Model):
 
                 print("record ", x)
                 is_credit = False
-                if main_account.internal_group in ('asset', 'expense'):
+                if main_account.internal_group in ['asset', 'expense']:
                     self.env['account.move.line'].create({
                         # 'account_id': vals['company_ids'][0][2]['destination_account'],
                         'account_id': record.account.id,
@@ -103,7 +108,7 @@ class CompanyDis(models.Model):
                         # 'account_id': vals['company_ids'][0][2]['destination_account'],
                         'account_id': record.account.id,
                         'move_id': x.id,
-                        'debit': main_account.current_balance,
+                        'debit': -main_account.current_balance,
                     })
                     print('got here 2')
                     is_credit = False
@@ -121,7 +126,7 @@ class CompanyDis(models.Model):
                         # 'account_id': vals['company_ids'][0][2]['destination_account'],
                         'account_id': record.conter_account.id,
                         'move_id': x.id,
-                        'credit': main_account.current_balance,
+                        'credit': -main_account.current_balance,
                     })
                     print('got here 4')
                 x.action_post()
@@ -140,7 +145,7 @@ class CompanyDis(models.Model):
                         self.env['account.move.line'].create({
                             'account_id': line.destination_account.id,
                             'move_id': x.id,
-                            'credit': record.account_current_balance * line.rate,
+                            'credit': -record.account_current_balance * line.rate,
                         })
                         # print('got  here 11')
                         # print('tax',main_account_line.current_balance)
@@ -160,7 +165,7 @@ class CompanyDis(models.Model):
                         self.env['account.move.line'].create({
                             'account_id': line.counter_account.id,
                             'move_id': x.id,
-                            'debit': record.account_current_balance * line.rate,
+                            'debit': -record.account_current_balance * line.rate,
                         })
                         # print('got here 33')
                         # print('tax', counter_account_line.current_balance)
@@ -207,47 +212,104 @@ class CompanyDis(models.Model):
             res.append((rec.id, name))
         return res
 
-    def cr_move_for_original(self, vals,date):
-        x = self.env['account.move'].create({
-            'date': date,
-            'journal_id': vals['journal'],
-            'ref': 'Transfer from company ',
-        })
+    def cr_move_for_original(self, vals, date, main_account):
 
-        main_account = self.env['account.account'].search([('id', '=', vals['account'])])
-        is_credit = False
+        _LOGGER.info(" main account aaaaaaaaaaaa")
         if main_account.internal_group in ('asset', 'expense'):
-            self.env['account.move.line'].create({
-                'account_id': vals['account'],
-                'move_id': x.id,
-                'credit': main_account.current_balance,
-            })
-            is_credit = True
+            _LOGGER.info(" main account abab")
+            self.env['account.move'].create({
+                'date': date,
+                'journal_id': vals['journal'],
+                'ref': 'Transfer from company ',
+                'line_ids': [
+                    (0, 0, {'debit': 0.0, 'credit': main_account.current_balance, 'account_id': vals['account']}),
+                    (
+                        0, 0,
+                        {'debit': main_account.current_balance, 'credit': 0.0, 'account_id': vals['conter_account']}),
+                ],
+            }).action_post()
+
         elif main_account.internal_group in ('income', 'liability', 'equity'):
-            self.env['account.move.line'].create({
-                'account_id': vals['account'],
-                'move_id': x.id,
-                'debit': main_account.current_balance,
-            })
-            is_credit = False
+            _LOGGER.info(" main account saasas")
 
-        if is_credit:
-            self.env['account.move.line'].create({
-                'account_id': vals['conter_account'],
-                'move_id': x.id,
-                'debit': main_account.current_balance,
-            })
-        else:
-            self.env['account.move.line'].create({
-                'account_id': vals['conter_account'],
-                'move_id': x.id,
-                'credit': main_account.current_balance,
-            })
-        x.action_post()
+            self.env['account.move'].create({
+                'date': date,
+                'journal_id': vals['journal'],
+                'ref': 'Transfer from company ',
+                'line_ids': [
 
-        # if vals['frequency'] == 'monthly':
+                    (0, 0, {'debit': -main_account.current_balance, 'credit': 0.0, 'account_id': vals['account']}),
+                    (
+                        0, 0,
+                        {'debit': 0.0, 'credit': -main_account.current_balance, 'account_id': vals['conter_account']}),
+                ],
+            }).action_post()
 
+    # def cr_move_for_original(self, vals,date,main_account):
 
+    #     x = self.env['account.move'].create({
+    #         'date': date,
+    #         'journal_id': vals['journal'],
+    #         'ref': 'Transfer from company ',
+    #         'line_ids'
+
+    #     })
+    #     _LOGGER.info(" company dist 1 ")
+    #     _LOGGER.info(" main account 1111")
+    #     _LOGGER.info(main_account.internal_group)
+
+    #     if main_account.internal_group == 'asset' :
+    #         _LOGGER.info(" main account 2222")
+    #     a = ['asset', 'expense']
+    #     b = ['income', 'liability', 'equity']
+    #     if main_account.internal_group in a :
+
+    #         _LOGGER.info(" main account aa")
+
+    #     is_credit = False
+    #     if main_account.internal_group in a:
+    #         _LOGGER.info(" main account abab")
+    #         self.env['account.move.line'].create({
+    #             'account_id': vals['account'],
+    #             'move_id': x.id,
+    #             'debit': 0.0,
+    #             'credit': 5000,
+    #         })
+    #         _LOGGER.info(" company dist 2 ")
+    #         is_credit = True
+    #     elif main_account.internal_group in b :
+    #         _LOGGER.info(" company dist 3 ")
+    #         self.env['account.move.line'].create({
+    #             'account_id': vals['account'],
+    #             'move_id': x.id,
+    #             'debit':5000,
+    #             'credit':0.0,
+    #         })
+    #         is_credit = False
+
+    #     if is_credit:
+    #         _LOGGER.info(" company dist 4 ")
+    #         self.env['account.move.line'].create({
+    #             'account_id': vals['conter_account'],
+    #             'move_id': x.id,
+    #             'debit': 5000,
+    #             'credit': 0.0,
+    #         })
+    #         _LOGGER.info(" company dist 4 ")
+    #     else:
+    #         self.env['account.move.line'].create({
+    #             'account_id': vals['conter_account'],
+    #             'move_id': x.id,
+    #             'debit': 0.0,
+    #             'credit': 5000,
+    #         })
+    #         _LOGGER.info(" company dist 5 ")
+    #     _LOGGER.info(" company dist 6 ")
+    # x.action_post()
+
+    # if vals['frequency'] == 'monthly':
+
+    # if vals['frequency'] == 'monthly':
 
     # @api.model_create_multi
     # def create(self, vals_list):
@@ -263,24 +325,8 @@ class CompanyDis(models.Model):
         original_date = vals.get('date', False)
         vals['or_date'] = vals.get('date', False)
 
-        print('monthly',vals['frequency'])
+        print('monthly', vals['frequency'])
         # print('inserted date ', vals['inserted_date'])
-
-        if vals['frequency'] == 'monthly':
-            date = datetime.strptime(original_date, '%Y-%m-%d')
-            vals['date'] = (date + relativedelta(months=1)).strftime('%Y-%m-%d')
-
-
-        elif vals['frequency'] == 'yearly':
-            print('yearly')
-            date = datetime.strptime(original_date, '%Y-%m-%d')
-            vals['date'] = (date + relativedelta(years=1)).strftime('%Y-%m-%d')
-            # print('yearly', rec.date)
-        else:
-            print('quarterly')
-            date = datetime.strptime(original_date, '%Y-%m-%d')
-            vals['date'] = (date + relativedelta(months=3)).strftime('%Y-%m-%d')
-            # print('next quarterly', rec.date)
 
         # Increment the date by 1 month
         # if original_date:
@@ -289,7 +335,29 @@ class CompanyDis(models.Model):
 
         print("date is ", vals['date'])
         print("original is ", original_date)
+        main_account = self.env['account.account'].search([('id', '=', vals['account'])])
+        # _LOGGER.info(" main account ")
+        # _LOGGER.info(main_account.internal_group)
+        current_date = datetime.now().date()
 
+        if str(current_date) == str(original_date):
+            _LOGGER.info(" vals ")
+            _LOGGER.info(vals['or_date'])
+
+            if vals['frequency'] == 'monthly':
+                date = datetime.strptime(original_date, '%Y-%m-%d')
+                vals['date'] = (date + relativedelta(months=1)).strftime('%Y-%m-%d')
+
+            elif vals['frequency'] == 'yearly':
+                print('yearly')
+                date = datetime.strptime(original_date, '%Y-%m-%d')
+                vals['date'] = (date + relativedelta(years=1)).strftime('%Y-%m-%d')
+                # print('yearly', rec.date)
+            else:
+                print('quarterly')
+                date = datetime.strptime(original_date, '%Y-%m-%d')
+                vals['date'] = (date + relativedelta(months=3)).strftime('%Y-%m-%d')
+                # print('next quarterly', rec.date)
 
         res = super(CompanyDis, self).create(vals)
         current_date = datetime.now().date()
@@ -302,15 +370,21 @@ class CompanyDis(models.Model):
         # based on their rate
         # BUT before all of this you need to link the moves of the inter companies with their parent move
 
-        if str(current_date) == str(original_date):
-            # print("date is ", vals['date'])
-            res.cr_move_for_original(vals,original_date)
-            print("frequency is ", vals['frequency'])
-            # print("date create ", vals['date'])
-            # vals['date'] = vals['date'] + str(relativedelta(months=1))
-            # vals['date'] = (datetime.strptime(vals['date'], '%Y-%m-%d') + relativedelta(months=1)).strftime('%Y-%m-%d')
-            # print("increment date ", vals['date'])
+        _LOGGER.info(" current date  ")
+        _LOGGER.info(current_date)
+        _LOGGER.info(" orginal date ")
+        _LOGGER.info(original_date)
 
+        if str(current_date) == str(original_date):
+            # res.date= res.or_date
+            x = res.cr_move_for_original(vals, original_date, main_account)
+
+            # x.action_post()
+        print("frequency is ", vals['frequency'])
+        # print("date create ", vals['date'])
+        # vals['date'] = vals['date'] + str(relativedelta(months=1))
+        # vals['date'] = (datetime.strptime(vals['date'], '%Y-%m-%d') + relativedelta(months=1)).strftime('%Y-%m-%d')
+        # print("increment date ", vals['date'])
         return res
 
 
@@ -350,44 +424,85 @@ class CompanyLines(models.Model):
 
         return {'domain': {'destination_account': domain}}
 
-    def cr_move_line_for_other(self, vals, parent):
+    def cr_move_line_for_other(self, vals, parent, main_account_line):
 
-        x = self.env['account.move'].create({
-            'journal_id': vals['journal'],
-            'date': parent.or_date,
-            'ref': 'Transfer to other companies '
-        })
-
-        main_account_line = self.env['account.account'].search([('id', '=', vals['destination_account'])])
-        is_credit = False
         if main_account_line.internal_group in ('income', 'liability', 'equity'):
-            self.env['account.move.line'].create({
-                'account_id': vals['destination_account'],
-                'move_id': x.id,
-                'credit': parent.account_current_balance * vals['rate'],
-            })
-            is_credit = True
-        elif main_account_line.internal_group in ('asset', 'expense'):
-            self.env['account.move.line'].create({
-                'account_id': vals['destination_account'],
-                'move_id': x.id,
-                'debit': parent.account_current_balance * vals['rate'],
-            })
-            is_credit = False
 
-        if is_credit:
-            self.env['account.move.line'].create({
-                'account_id': vals['counter_account'],
-                'move_id': x.id,
-                'debit': parent.account_current_balance * vals['rate'],
-            })
-        else:
-            self.env['account.move.line'].create({
-                'account_id': vals['counter_account'],
-                'move_id': x.id,
-                'credit': parent.account_current_balance * vals['rate'],
-            })
-        x.action_post()
+            self.env['account.move'].create({
+                'date': parent.or_date,
+                'journal_id': vals['journal'],
+                'ref': 'Transfer  to other companies ',
+                'line_ids': [
+                    (0, 0, {'debit': 0.0, 'credit': -parent.account_current_balance * vals['rate'],
+                            'account_id': vals['destination_account']}),
+                    (0, 0, {'debit': -parent.account_current_balance * vals['rate'], 'credit': 0.0,
+                            'account_id': vals['counter_account']}),
+                ],
+            }).action_post()
+        elif main_account_line.internal_group in ('asset', 'expense'):
+
+            self.env['account.move'].create({
+                'date': parent.or_date,
+                'journal_id': vals['journal'],
+                'ref': 'Transfer  to other companies ',
+                'line_ids': [
+                    (0, 0, {'debit': parent.account_current_balance * vals['rate'], 'credit': 0.0,
+                            'account_id': vals['destination_account']}),
+                    (0, 0, {'debit': 0.0, 'credit': parent.account_current_balance * vals['rate'],
+                            'account_id': vals['counter_account']}),
+                ],
+            }).action_post()
+
+    #         _LOGGER.info(" main account BBBBBBBBBB")
+    #         self.env['account.move'].create({
+    #         'date': parent.or_date,
+    #         'journal_id': vals['journal'],
+    #         'ref': 'Transfer  to other companies ',
+    #         'line_ids': [
+    #             (0, 0, {'debit': 0.0, 'credit': parent.account_current_balance * vals['rate'],
+    #                     'account_id': vals['destination_account']}),
+    #             (0, 0, {'debit': parent.account_current_balance * vals['rate'], 'credit': 0.0,
+    #                     'account_id': vals['counter_account']}),
+    #         ],
+
+    # })
+
+    # x = self.env['account.move'].create({
+    #     'journal_id': vals['journal'],
+    #     'date': parent.or_date,
+    #     'ref': 'Transfer to other companies '
+    # })
+
+    # main_account_line = self.env['account.account'].search([('id', '=', vals['destination_account'])])
+    # is_credit = False
+    # if main_account_line.internal_group in ('income', 'liability', 'equity'):
+    #     self.env['account.move.line'].create({
+    #         'account_id': vals['destination_account'],
+    #         'move_id': x.id,
+    #         'credit': parent.account_current_balance * vals['rate'],
+    #     })
+    #     is_credit = True
+    # elif main_account_line.internal_group in ('asset', 'expense'):
+    #     self.env['account.move.line'].create({
+    #         'account_id': vals['destination_account'],
+    #         'move_id': x.id,
+    #         'debit': parent.account_current_balance * vals['rate'],
+    #     })
+    #     is_credit = False
+
+    # if is_credit:
+    #     self.env['account.move.line'].create({
+    #         'account_id': vals['counter_account'],
+    #         'move_id': x.id,
+    #         'debit': parent.account_current_balance * vals['rate'],
+    #     })
+    # else:
+    #     self.env['account.move.line'].create({
+    #         'account_id': vals['counter_account'],
+    #         'move_id': x.id,
+    #         'credit': parent.account_current_balance * vals['rate'],
+    #     })
+    # x.action_post()
 
     @api.model
     def create(self, vals):
@@ -400,6 +515,7 @@ class CompanyLines(models.Model):
         #     frequency = company_dis.frequency
 
         # print('orginal date in lines', original_date)
+        main_account_line = self.env['account.account'].search([('id', '=', vals['destination_account'])])
 
         res = super(CompanyLines, self).create(vals)
         current_date = datetime.now().date()
@@ -407,8 +523,8 @@ class CompanyLines(models.Model):
         # original_date = parent.vals.get('date', False)
         print("parent is ", parent.account.current_balance)
         # print("date in line   is ",original_date)
-        if current_date == parent.or_date :
-            res.cr_move_line_for_other(vals, parent)
+        if current_date == parent.or_date:
+            res.cr_move_line_for_other(vals, parent, main_account_line)
         return res
 
     @api.model
@@ -425,8 +541,8 @@ class CompanyLines(models.Model):
     def _check_rate(self):
         for record in self:
             if record.rate > 1.00:
-                raise ValidationError("The rate in Companies cannot exceed 100 %.")
+                raise ValidationError("The rate in Companies cannot exceed 100  line %.")
             elif record.rate < 0.00:
-                raise ValidationError("The rate in Companies cannot be negative .")
+                raise ValidationError("The rate in Companies cannot be negative line .")
             elif record.rate == 0.00:
-                raise ValidationError("The rate in Companies must be greater than zero ")
+                raise ValidationError("The rate in Companies must be greater than zero line ")
