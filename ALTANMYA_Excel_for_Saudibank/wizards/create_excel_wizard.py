@@ -49,7 +49,7 @@ class Createexcelwizard(models.TransientModel):
             domain2 = [('id', '=', emp_info_id.id)]
             domain3 = [('emp_Info', '=', emp_info_id.id)]
 
-        recc1 = self.env['hr.employee'].search(domain2)
+        recc1 = self.env['hr.employee'].sudo().search(domain2)
         recc = self.env['hr.employee'].search(domain3)
         forpayslips = self.env['hr.employee'].search(domain3)
         print("forpayslips", forpayslips)
