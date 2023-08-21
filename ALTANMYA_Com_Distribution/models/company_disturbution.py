@@ -10,7 +10,6 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class CompanyDis(models.Model):
-
     _name = "companies.disturubition"  # name of Table
     _inherit = 'mail.thread'
 
@@ -67,8 +66,6 @@ class CompanyDis(models.Model):
             total_tax = sum(record.company_ids.mapped('rate'))
             record.total_rate = total_tax
 
-
-
     @api.constrains('total_rate')
     def _check_total_rate(self):
         for record in self:
@@ -85,98 +82,152 @@ class CompanyDis(models.Model):
             print('rec', records)
             for record in records:
                 main_account = self.env['account.account'].search([('id', '=', record.account.id)])
-                # counter_account = self.env['account.account'].search([('id', '=', record.conter_account.id)])
-                x = self.env['account.move'].create({
-                    'date': record.date,
-                    'journal_id': record.journal.id,
-                    'ref': 'Transfer from original company (cron) ',
-                })
-
-                print("record ", x)
-                is_credit = False
-                if main_account.internal_group in ['asset', 'expense']:
-                    self.env['account.move.line'].create({
-                        # 'account_id': vals['company_ids'][0][2]['destination_account'],
-                        'account_id': record.account.id,
-                        'move_id': x.id,
-                        'credit': main_account.current_balance,
-                    })
-                    print('got here 1')
-                    is_credit = True
+                if main_account.internal_group in ('asset', 'expense'):
+                    _LOGGER.info(" main account abab")
+                    self.env['account.move'].create({
+                        'date': record.date,
+                        'journal_id': record.journal.id,
+                        'ref': 'Transfer from original company (cron) ',
+                        'line_ids': [
+                            (0, 0,
+                             {'debit': 0.0, 'credit': main_account.current_balance, 'account_id': record.account.id}),
+                            (
+                                0, 0,
+                                {'debit': main_account.current_balance, 'credit': 0.0,
+                                 'account_id': record.conter_account.id}),
+                        ],
+                    }).action_post()
                 elif main_account.internal_group in ('income', 'liability', 'equity'):
-                    self.env['account.move.line'].create({
-                        # 'account_id': vals['company_ids'][0][2]['destination_account'],
-                        'account_id': record.account.id,
-                        'move_id': x.id,
-                        'debit': -main_account.current_balance,
-                    })
-                    print('got here 2')
-                    is_credit = False
 
-                if is_credit:
-                    self.env['account.move.line'].create({
-                        # 'account_id': vals['company_ids'][0][2]['destination_account'],
-                        'account_id': record.conter_account.id,
-                        'move_id': x.id,
-                        'debit': main_account.current_balance,
-                    })
-                    print('got here 3')
-                else:
-                    self.env['account.move.line'].create({
-                        # 'account_id': vals['company_ids'][0][2]['destination_account'],
-                        'account_id': record.conter_account.id,
-                        'move_id': x.id,
-                        'credit': -main_account.current_balance,
-                    })
-                    print('got here 4')
-                x.action_post()
+                    _LOGGER.info(" main account saasas")
+                    self.env['account.move'].create({
+                        'date': record.date,
+                        'journal_id': record.journal.id,
+                        'ref': 'Transfer from original company (cron) ',
+                        'line_ids': [
+
+                            (0, 0,{'debit': -main_account.current_balance, 'credit': 0.0, 'account_id': record.account.id}),
+                            (0, 0,{'debit': 0.0, 'credit': -main_account.current_balance,'account_id': record.conter_account.id}),
+                        ],
+                    }).action_post()
+                # counter_account = self.env['account.account'].search([('id', '=', record.conter_account.id)])
+                # x = self.env['account.move'].create({
+                #     'date': record.date,
+                #     'journal_id': record.journal.id,
+                #     'ref': 'Transfer from original company (cron) ',
+                # })
+                #
+                # print("record ", x)
+                # is_credit = False
+                # if main_account.internal_group in ['asset', 'expense']:
+                #     self.env['account.move.line'].create({
+                #         # 'account_id': vals['company_ids'][0][2]['destination_account'],
+                #         'account_id': record.account.id,
+                #         'move_id': x.id,
+                #         'credit': main_account.current_balance,
+                #     })
+                #     print('got here 1')
+                #     is_credit = True
+                # elif main_account.internal_group in ('income', 'liability', 'equity'):
+                #     self.env['account.move.line'].create({
+                #         # 'account_id': vals['company_ids'][0][2]['destination_account'],
+                #         'account_id': record.account.id,
+                #         'move_id': x.id,
+                #         'debit': -main_account.current_balance,
+                #     })
+                #     print('got here 2')
+                #     is_credit = False
+                #
+                # if is_credit:
+                #     self.env['account.move.line'].create({
+                #         # 'account_id': vals['company_ids'][0][2]['destination_account'],
+                #         'account_id': record.conter_account.id,
+                #         'move_id': x.id,
+                #         'debit': main_account.current_balance,
+                #     })
+                #     print('got here 3')
+                # else:
+                #     self.env['account.move.line'].create({
+                #         # 'account_id': vals['company_ids'][0][2]['destination_account'],
+                #         'account_id': record.conter_account.id,
+                #         'move_id': x.id,
+                #         'credit': -main_account.current_balance,
+                #     })
+                #     print('got here 4')
+                # x.action_post()
                 for line in record.company_ids:
                     destination_company_name = line.company.name
                     print("line", line)
                     # parent = self.env['companies.disturubition'].search([('id', '=',line.company_id.id)])
                     main_account_line = self.env['account.account'].search([('id', '=', line.destination_account.id)])
-                    x = self.env['account.move'].create({
-                        'journal_id': line.journal.id,
-                        'date': record.date,
-                        'ref': 'Transfer to other companies cron ',
-                    })
-                    is_credit = False
                     if main_account_line.internal_group in ('income', 'liability', 'equity'):
-                        self.env['account.move.line'].create({
-                            'account_id': line.destination_account.id,
-                            'move_id': x.id,
-                            'credit': -record.account_current_balance * line.rate,
-                        })
-                        # print('got  here 11')
-                        # print('tax',main_account_line.current_balance)
-                        is_credit = True
-                    elif main_account_line.internal_group in ('asset', 'expense'):
-                        self.env['account.move.line'].create({
-                            # 'account_id': vals['company_ids'][0][2]['destination_account'],
-                            'account_id': line.destination_account.id,
-                            'move_id': x.id,
-                            'debit': record.account_current_balance * line.rate,
-                        })
-                        # print('got here 22')
-                        # print('tax', main_account_line.current_balance)
-                        is_credit = False
 
-                    if is_credit:
-                        self.env['account.move.line'].create({
-                            'account_id': line.counter_account.id,
-                            'move_id': x.id,
-                            'debit': -record.account_current_balance * line.rate,
-                        })
-                        # print('got here 33')
-                        # print('tax', counter_account_line.current_balance)
-                    else:
-                        self.env['account.move.line'].create({
-                            # 'account_id': vals['company_ids'][0][2]['destination_account'],
-                            'account_id': line.counter_account.id,
-                            'move_id': x.id,
-                            'credit': record.account_current_balance * line.rate,
-                        })
-                    x.action_post()
+                        self.env['account.move'].create({
+                            'date': line.or_date,
+                            'journal_id': line.journal.id,
+                            'ref': 'Transfer  to other companies ',
+                            'line_ids': [
+                                (0, 0, {'debit': 0.0, 'credit': -record.account_current_balance * line.rate,
+                                        'account_id': line.destination_account.id}),
+                                (0, 0, {'debit': -record.account_current_balance * line.rate, 'credit': 0.0,
+                                        'account_id': line.counter_account.id}),
+                            ],
+                        }).action_post()
+                    elif main_account_line.internal_group in ('asset', 'expense'):
+
+                        self.env['account.move'].create({
+                            'date': record.date,
+                            'journal_id': line.journal.id,
+                            'ref': 'Transfer  to other companies ',
+                            'line_ids': [
+                                (0, 0, {'debit': record.account_current_balance * line.rate, 'credit': 0.0,
+                                        'account_id': line.destination_account.id}),
+                                (0, 0, {'debit': 0.0, 'credit': record.account_current_balance * line.rate,
+                                        'account_id': line.counter_account.id}),
+                            ],
+                        }).action_post()
+                    # x = self.env['account.move'].create({
+                    #     'journal_id': line.journal.id,
+                    #     'date': record.date,
+                    #     'ref': 'Transfer to other companies cron ',
+                    # })
+                    # is_credit = False
+                    # if main_account_line.internal_group in ('income', 'liability', 'equity'):
+                    #     self.env['account.move.line'].create({
+                    #         'account_id': line.destination_account.id,
+                    #         'move_id': x.id,
+                    #         'credit': -record.account_current_balance * line.rate,
+                    #     })
+                    #     # print('got  here 11')
+                    #     # print('tax',main_account_line.current_balance)
+                    #     is_credit = True
+                    # elif main_account_line.internal_group in ('asset', 'expense'):
+                    #     self.env['account.move.line'].create({
+                    #         # 'account_id': vals['company_ids'][0][2]['destination_account'],
+                    #         'account_id': line.destination_account.id,
+                    #         'move_id': x.id,
+                    #         'debit': record.account_current_balance * line.rate,
+                    #     })
+                    #     # print('got here 22')
+                    #     # print('tax', main_account_line.current_balance)
+                    #     is_credit = False
+                    #
+                    # if is_credit:
+                    #     self.env['account.move.line'].create({
+                    #         'account_id': line.counter_account.id,
+                    #         'move_id': x.id,
+                    #         'debit': -record.account_current_balance * line.rate,
+                    #     })
+                    #     # print('got here 33')
+                    #     # print('tax', counter_account_line.current_balance)
+                    # else:
+                    #     self.env['account.move.line'].create({
+                    #         # 'account_id': vals['company_ids'][0][2]['destination_account'],
+                    #         'account_id': line.counter_account.id,
+                    #         'move_id': x.id,
+                    #         'credit': record.account_current_balance * line.rate,
+                    #     })
+                    # x.action_post()
 
     @api.model
     def schedule_cron_job(self):
