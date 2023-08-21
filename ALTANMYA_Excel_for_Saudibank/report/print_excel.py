@@ -101,9 +101,30 @@ class ExcelPayrollXlsx(models.AbstractModel):
             print("my query 2 ", header_list)
             emp_info = self.env['employee.info'].browse(emp_info_record)
             print("emp_info",emp_info)
+            _LOGGER.info(" /////////////////////// ")
+            _LOGGER.info(queryyy)
+            _LOGGER.info(" %%%%%%% ")
+            _LOGGER.info(header_list)
             if emp_info_id and emp_info_id != emp_info_record['id']:
                 continue
             col = 0
+            # row_data = [
+            #     emp_info.type,
+            #     emp_info.name,
+            #     emp_info.agreement_code,
+            #     emp_info.finance_account,
+            #     emp_info.num_of_section,
+            #     due_date,
+            #     emp_info.num_of_facilityin_in_office,
+            #     emp_info.num_of_facilityin_in_commerce,
+            #     emp_info.bank_code,
+            #     emp_info.currency.name,
+            #     batch_num,
+            #     # curency[0],
+            # ]
+            # # for field_name in bank_info_record:
+            # sheet.write_row(row, col, row_data, border_format)
+            # row += 1
             for header_data in header_list :
                 row_data = [
                     header_data['type'],
@@ -140,7 +161,7 @@ class ExcelPayrollXlsx(models.AbstractModel):
         # Iterate through each record
         print('data ', data)
         for employee_id in data['rec']:
-            emp = self.env['hr.employee'].browse(employee_id)
+            emp = self.env['hr.employee'].sudo().browse(employee_id)
             if not aggregated_data.get(emp.id):
                 aggregated_data[emp.id] = {
                     'employee_id': emp,

@@ -1,4 +1,7 @@
 from odoo import api, fields, models
+import logging
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class Createexcelwizard(models.TransientModel):
@@ -43,14 +46,17 @@ class Createexcelwizard(models.TransientModel):
         domain1 = []
         domain2 = []
         emp_info_id = self.emp_info_id
+        _LOGGER.info("emp_info_id")
+        _LOGGER.info(emp_info_id)
+
         # payslips_batch_id=self.payslips_batch_id
         if emp_info_id:
             # domain1=[('name', '=', emp_info_id.employee_name)]
-            domain2 = [('id', '=', emp_info_id.id)]
+            domain2 = [('id', '=', self.emp_info_id.id)]
             domain3 = [('emp_Info', '=', emp_info_id.id)]
 
-        recc1 = self.env['hr.employee'].sudo().search(domain2)
-        recc = self.env['hr.employee'].search(domain3)
+        recc1 = self.env['employee.info'].search(domain2)
+        recc = self.env['hr.employee'].sudo().search(domain3)
         forpayslips = self.env['hr.employee'].search(domain3)
         print("forpayslips", forpayslips)
         x = self.env['hr.payslip']
@@ -60,9 +66,11 @@ class Createexcelwizard(models.TransientModel):
         print("rec", recc, temp)
         print("datttttee", self.due_date)
         currency_name = self.emp_info_id.currency.name
-        print("currency",currency_name)
+        print("currency", currency_name)
 
         date = str(self.due_date.day) + '-' + str(self.due_date.month) + '-' + str(self.due_date.year)
+        _LOGGER.info("rec1")
+        _LOGGER.info(recc1)
         data = {
             'rec': [emp.id for emp in recc],
             'rec1': [emp.id for emp in recc1],

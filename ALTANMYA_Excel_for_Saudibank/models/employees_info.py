@@ -10,14 +10,14 @@ class EmpInfo(models.Model):
     _name = "employee.info"  # name of Table
 
     type = fields.Char(string="Type")
-    name = fields.Char(string="Name")
-    agreement_code = fields.Char(string="Agreement Code", tracking=True)
+    name = fields.Char(string="Name",required=True)
+    agreement_code = fields.Char(string="Agreement Code", tracking=True,required=True)
     finance_account = fields.Char(string="Finance account", tracking=True)
     num_of_section = fields.Char(string="Number of ٍSection", tracking=True)
     num_of_facilityin_in_office = fields.Char(string="Number of Facility (office)", tracking=True)
     num_of_facilityin_in_commerce = fields.Char(string="Number of Facility (commerce)", tracking=True)
-    bank_code = fields.Char(string="Bank Code", tracking=True)
-    currency = fields.Many2one('res.currency', string='Currency', selection_add=[('3', 'SAR')])
+    bank_code = fields.Char(string="Bank Code", tracking=True,required=True)
+    currency = fields.Many2one('res.currency', string='Currency', selection_add=[('3', 'SAR')],required=True)
     file_reference = fields.Char(string='File Reference')
 
     # hr_employee=fields.Many2one('hr.employee', string='Employee')
