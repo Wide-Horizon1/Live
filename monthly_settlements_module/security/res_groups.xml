@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="module_monthly_settlements_approve" model="ir.module.category">
+        <field name="name">Monthly Settlements Access</field>
+        <field name="description">Helps you manage payroll module extension.</field>
+        <field name="sequence">10</field>
+    </record>
+
+
+<!--    <record model="res.groups" id="monthly_settlements_stage_type">-->
+<!--        <field name="name">Admin</field>-->
+<!--        <field name="category_id" ref="module_monthly_settlements_approve"/>-->
+<!--    </record>-->
+
+    <record model="res.groups" id="monthly_settlements_stage_type_user">
+        <field name="name">User --</field>
+        <field name="category_id" ref="monthly_settlements_module.module_monthly_settlements_approve"/>
+    </record>
+    <record model="res.groups" id="monthly_admin">
+        <field name="name">Admin -- </field>
+        <field name="category_id" ref="monthly_settlements_module.module_monthly_settlements_approve"/>
+    </record>
+
+
+    <record model="ir.rule" id="monthly_settelments">
+        <field name="name">monthly-multi-company</field>
+        <field name="model_id" search="[('model','=','monthly.settlements')]" model="ir.model"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+
+
+</odoo>
