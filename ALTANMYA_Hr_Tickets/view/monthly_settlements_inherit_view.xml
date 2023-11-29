@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_monthly_settlements_inherit" model="ir.ui.view">
+        <field name="name">monthly.settlements.inherit</field>
+        <field name="model">monthly.settlements</field>
+        <field name="inherit_id" ref="monthly_settlements_module.view_monthly_settlements_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='date']" position="after">
+                <field name="num_of_tick" attrs="{'invisible': [('flag', '=', False)]}"/>
+                <field name="flag" invisible="1"/>
+                <field name="fixed" invisible="1"/>
+                <field name="date_time" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='fixed_field']" position="attributes">
+                <attribute name="attrs">{'readonly':[('flag', '=', True)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

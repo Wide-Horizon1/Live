@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ticket_allowance_settings,access.ticket.allowance.settings,model_ticket_allowance_settings,,1,1,1,1
+access_ticket_allowance_settings_lines,access.ticket.allowance.settings.lines,model_ticket_allowance_settings_lines,,1,1,1,1
+access_ticket_log_operations_lines,access.ticket.log.operations.lines,model_ticket_log_operations_lines,,1,1,1,1
+
