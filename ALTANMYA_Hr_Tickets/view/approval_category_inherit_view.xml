@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_approval_category_inherit" model="ir.ui.view">
+        <field name="name">approval.category.inherit</field>
+        <field name="model">approval.category</field>
+        <field name="inherit_id" ref="approvals.approval_category_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='automated_sequence']" position="after">
+                <field name="allowance_tickets"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
