@@ -43,6 +43,7 @@ class TicketLogOperationsLines(models.Model):
     cost_of_tickets = fields.Float(string='Cost', compute='cost_times_number')
     request_date = fields.Datetime(string='Date')
     ticket_log_id = fields.Many2one('hr.employee', string='Tickets Log')
+    appr_req_id = fields.Many2one('approval.request')
 
     def cost_times_number(self):
         for rec in self:

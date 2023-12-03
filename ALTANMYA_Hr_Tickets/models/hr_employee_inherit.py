@@ -25,18 +25,19 @@ class HrEmployeeInherit(models.Model):
             for contract in ticket_value.contract_ids:
                 print("contract __________ >> ", contract, state)
                 print("date __________ >> ", current_date, contract.date_end)
-                if state.when_claiming == 'end':
-                    if contract.state in ['open', 'close']:
-                        if current_date > contract.date_end:
+                if contract.date_end and current_date > contract.date_end:
+                    if state.when_claiming == 'end':
+                        if contract.state in ['open', 'close']:
                             total = contract.contract_tickets
                             rec.number_of_tickets += total
                             print('lolo', rec.number_of_tickets)
                 else:
-                    if contract.state in ['open', 'close']:
-                        if current_date > contract.date_start:
-                            total = contract.contract_tickets
-                            rec.number_of_tickets += total
-                            print('start', rec.number_of_tickets)
+                    if state.when_claiming != 'end':
+                        if contract.state in ['open', 'close']:
+                            if current_date > contract.date_start:
+                                total = contract.contract_tickets
+                                rec.number_of_tickets += total
+                                print('start', rec.number_of_tickets)
 
     def _compute_when_claiming(self):
         for rec in self:
@@ -47,7 +48,7 @@ class HrEmployeeInherit(models.Model):
                 if rec.id:
                     if contract.state in ['open', 'close']:
                         total = (rec.number_of_tickets + rec.number_of_tickets_date) - rec.approved
-                        rec.number_of_tickets_start_end = abs(total)
+                        rec.number_of_tickets_start_end = total
                         print('total ', total)
                         print('num of tickets', self.number_of_tickets)
                         print('contract', self.number_of_tickets_date)
@@ -104,7 +105,7 @@ class HrEmployeeInherit(models.Model):
     def request_approve(self):
         for rec in self:
             approved_value = self.env['approval.request'].search(
-                [('request_status', '=', 'approved'), ('category_id.allowance_tickets', '=', True),
+                [('request_status', '=', 'approved'), ('category_id.allowance_tickets', '=', True), ('state_of_req_approval', '=', 'approved'),
                  ('employee_id', '=', self.id)],
                 order="id desc")
             rec.approved = 0
