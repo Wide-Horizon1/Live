@@ -7,7 +7,6 @@ from odoo.exceptions import ValidationError
 import logging
 
 _LOGGER = logging.getLogger(__name__)
-    
 
 class HrPayslip(models.Model):
     _inherit = "hr.payslip"
@@ -75,6 +74,7 @@ class HrPayslip(models.Model):
     @api.depends('name')
     def _compute_days(self):
         print("i am here ")
+        _LOGGER.info("basiccccccccccccc haerererereerrererererer :")
         sum_days = 0.0
         for rec in self:
             for line in rec.worked_days_line_ids:
@@ -88,7 +88,6 @@ class HrPayslip(models.Model):
     @api.depends('line_ids')
     def _compute_net(self):
         _LOGGER.info("basiccccccccccccc haerererereerrererererer :")
-
         category_mapping = {
             'Allowance': 'allowances',
             'Deduction': 'deductions',
@@ -113,7 +112,7 @@ class HrPayslip(models.Model):
             'Advance': 'advance_discount',
             'Penalty': 'penalty_deduction',
         }
-        _LOGGER.info(" basiccccccccccccc------------------------------------------ :")
+        _LOGGER.info("\ddddddddddddddddddddddddddddddd haerererereerrererererer :")
         category_sums = {field: 0.0 for field in category_mapping.values()}
         for payslip in self:
             for line in payslip.line_ids:
@@ -136,13 +135,10 @@ class HrPayslip(models.Model):
                 # if workdays_name == 'Attendance':
                 #     print("4")
                 #     category_sums['attendance'] += worked_days_line.number_of_days
-            _LOGGER.info('basiccccccccccccc222222222222222222222222222222222222222 :')
 
             for field, value in category_sums.items():
                 # print("categories is ", category_sums)
                 setattr(payslip, field, value)
-
-          
 
             if payslip.basic_sal :
 
