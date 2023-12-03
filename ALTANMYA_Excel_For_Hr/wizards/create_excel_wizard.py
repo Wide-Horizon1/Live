@@ -64,7 +64,7 @@ class Createexcelwizard(models.TransientModel):
             _LOGGER.info('data list :')
             _LOGGER.info( data_list)
             _LOGGER.info('data list 222222222222222 :')
-            _LOGGER.info( data_list)
+            _LOGGER.info( data1)
             data = {
                 'records': data_list,
 
