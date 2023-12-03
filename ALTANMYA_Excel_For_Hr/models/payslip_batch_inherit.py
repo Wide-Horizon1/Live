@@ -76,7 +76,7 @@ class HrPayslip(models.Model):
     @api.depends('name')
     def _compute_days(self):
         print("i am here ")
-        _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
+        _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :",self)
         sum_days = 0.0
         for rec in self:
             for line in rec.worked_days_line_ids:
