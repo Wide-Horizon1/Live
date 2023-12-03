@@ -87,7 +87,7 @@ class HrPayslip(models.Model):
 
     @api.depends('line_ids')
     def _compute_net(self):
-        _LOGGER.info('basiccccccccccccc haerererereerrererererer :')
+        _LOGGER.info("basiccccccccccccc haerererereerrererererer :")
 
         category_mapping = {
             'Allowance': 'allowances',
@@ -113,7 +113,7 @@ class HrPayslip(models.Model):
             'Advance': 'advance_discount',
             'Penalty': 'penalty_deduction',
         }
-        _LOGGER.info('basiccccccccccccc------------------------------------------ :')
+        _LOGGER.info(" basiccccccccccccc------------------------------------------ :")
         category_sums = {field: 0.0 for field in category_mapping.values()}
         for payslip in self:
             for line in payslip.line_ids:
