@@ -154,7 +154,6 @@ class HrPayslip(models.Model):
             _LOGGER.info(payslip.basic_sal)   
             if not payslip.basic_sal :
                 _LOGGER.info("payslip basiccc1111111111111111111111111c")
-                _LOGGER.info( payslip.wage)
 
                 payslip.basic_sal = payslip.basic_wage
                 payslip.day_value = payslip.basic_sal / 30
