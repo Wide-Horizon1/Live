@@ -111,6 +111,7 @@ class HrPayslip(models.Model):
             'Advance': 'advance_discount',
             'Penalty': 'penalty_deduction',
         }
+        _LOGGER.info('basiccccccccccccc------------------------------------------ :')
         category_sums = {field: 0.0 for field in category_mapping.values()}
         for payslip in self:
             for line in payslip.line_ids:
@@ -133,12 +134,13 @@ class HrPayslip(models.Model):
                 # if workdays_name == 'Attendance':
                 #     print("4")
                 #     category_sums['attendance'] += worked_days_line.number_of_days
+            _LOGGER.info('basiccccccccccccc222222222222222222222222222222222222222 :')
 
             for field, value in category_sums.items():
                 # print("categories is ", category_sums)
                 setattr(payslip, field, value)
 
-            _LOGGER.info('basiccccccccccccc :',payslip.basic_sal)
+          
 
             if payslip.basic_sal :
 
