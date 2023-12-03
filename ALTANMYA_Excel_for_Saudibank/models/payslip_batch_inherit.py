@@ -14,12 +14,12 @@ class HrPayslip(models.Model):
     _inherit = "hr.payslip"
 
     
-    house_wage=fields.Monetary(compute='_compute_net')
-    allowances=fields.Monetary(compute='_compute_net')
-    deductions =fields.Monetary(compute='_compute_net')
+    house_wage=fields.Monetary(compute='compute_net_')
+    allowances=fields.Monetary(compute='compute_net_')
+    deductions =fields.Monetary(compute='compute_net_')
 
     @api.depends('line_ids')
-    def _compute_net(self):
+    def compute_net_(self):
         _LOGGER.info('data lisssssssssssssssssssssst :')
         sum_allowance = 0.0
         sum_deductions = 0.0
