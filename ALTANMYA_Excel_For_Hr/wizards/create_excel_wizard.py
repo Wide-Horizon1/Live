@@ -61,8 +61,10 @@ class Createexcelwizard(models.TransientModel):
                 }
                 data_list.append(data1)
             print("data is ", data_list)
-            _LOGGER.info('data list :', data_list)
-            _LOGGER.info('data list 222222222222222 :',data1)
+            _LOGGER.info('data list :')
+            _LOGGER.info( data_list)
+            _LOGGER.info('data list 222222222222222 :')
+            _LOGGER.info( data_list)
             data = {
                 'records': data_list,
 
