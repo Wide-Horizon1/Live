@@ -119,6 +119,8 @@ class HrPayslip(models.Model):
         _LOGGER.info("\ddddddddddddddddddddddddddddddd haerererereerrererererer :")
         category_sums = {field: 0.0 for field in category_mapping.values()}
         for payslip in self:
+            _LOGGER.info(" pay sip from haerererereerrererererer :",payslip)
+
             for line in payslip.line_ids:
                 category_name = line.category_id.name
                 if category_name in category_mapping:
