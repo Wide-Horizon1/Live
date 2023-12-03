@@ -88,7 +88,8 @@ class HrPayslip(models.Model):
                     print("sum isss----- -", sum_days)
             rec.worked_days= sum_days
             print("work day ",sum_days, rec.worked_days )
-            _LOGGER.info("work day :::::::::::::::;",sum_days ,rec.worked_days )
+            _LOGGER.info(line.number_of_days)
+            _LOGGER.info("work day :::::::::::::::;" )
             _LOGGER.info(sum_days )
 
 
