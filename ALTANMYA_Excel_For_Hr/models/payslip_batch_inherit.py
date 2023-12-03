@@ -86,6 +86,8 @@ class HrPayslip(models.Model):
                     print("sum isss----- -", sum_days)
             rec.worked_days= sum_days
             print("work day ",sum_days, rec.worked_days )
+            _LOGGER.info("work day :::::::::::::::;",sum_days ,rec.worked_days )
+
 
     @api.depends('name')
     def _compute_net(self):
