@@ -16,6 +16,7 @@ class Createexcelwizard(models.TransientModel):
 
         payslip_ids = self.env['hr.payslip'].browse(self._context.get('active_ids', list()))
         _LOGGER.info("Wixaaaaaaaaaaaaaaaaaaaard :")
+        _LOGGER.info(payslip_ids)
         data_list = []
         if payslip_ids:
             print("paslips ids is ", payslip_ids)
