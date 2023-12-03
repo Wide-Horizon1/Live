@@ -4,19 +4,23 @@ from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
+import logging
+
+_LOGGER = logging.getLogger(__name__)
 
 
 
 class HrPayslip(models.Model):
     _inherit = "hr.payslip"
 
-
+    
     house_wage=fields.Monetary(compute='_compute_net')
     allowances=fields.Monetary(compute='_compute_net')
     deductions =fields.Monetary(compute='_compute_net')
 
     @api.depends('line_ids')
     def _compute_net(self):
+        _LOGGER.info('data lisssssssssssssssssssssst :')
         sum_allowance = 0.0
         sum_deductions = 0.0
         sum_house = 0.0
