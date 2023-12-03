@@ -13,7 +13,7 @@ class HrPayslip(models.Model):
     house_wage=fields.Float(compute='_compute_net')
     allowances=fields.Float(compute='_compute_net')
     deductions =fields.Float(compute='_compute_net')
-    mobile_allowance =fields.Float(compute='_compute_net')
+    mobile_allowance =fields.Float(compute='_compute_net',default=0.0)
     transportation_allowance =fields.Float(compute='_compute_net')
     food_allowance =fields.Float(compute='_compute_net')
     nature_of_work=fields.Float(compute='_compute_net')
