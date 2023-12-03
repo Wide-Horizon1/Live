@@ -22,6 +22,10 @@ class Createexcelwizard(models.TransientModel):
             for rec in payslip_ids:
                 forpayslips = self.env['hr.employee'].search([('id', '=', rec.employee_id.id)])
                 print("emplyeeeeeid <<<<<<<<<<<<<<<<",forpayslips)
+                _LOGGER.info('emplyeeeeeid <<<<<<<<<<<<<<<<', forpayslips)
+                _LOGGER.info(forpayslips)
+                
+
                 data1 = {
                     'employee_id':forpayslips.id,
                     'emp_name': rec.employee_id.name,
