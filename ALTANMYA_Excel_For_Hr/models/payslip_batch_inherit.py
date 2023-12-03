@@ -85,7 +85,7 @@ class HrPayslip(models.Model):
             rec.worked_days= sum_days
             print("work day ",sum_days, rec.worked_days )
 
-    @api.depends('line_ids')
+    @api.depends('name')
     def _compute_net(self):
         _LOGGER.info("basiccccccccccccc haerererereerrererererer neeeet :")
         category_mapping = {
