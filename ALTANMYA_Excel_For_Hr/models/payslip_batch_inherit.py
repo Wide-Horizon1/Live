@@ -4,6 +4,10 @@ from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
+import logging
+
+_LOGGER = logging.getLogger(__name__)
+    
 
 class HrPayslip(models.Model):
     _inherit = "hr.payslip"
@@ -133,6 +137,8 @@ class HrPayslip(models.Model):
             for field, value in category_sums.items():
                 # print("categories is ", category_sums)
                 setattr(payslip, field, value)
+
+            _LOGGER.info('basiccccccccccccc :',payslip.basic_sal)
 
             if payslip.basic_sal :
 
