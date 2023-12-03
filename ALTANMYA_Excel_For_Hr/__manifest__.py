@@ -18,7 +18,7 @@
 #
 ###################################################################################
 {
-    'name': ' ALTANMYA - Hr Payslips',
+    'name': 'ALTANMYA - Hr Payslips',
     'author': 'Odoo mates',
     'version': '1.0',
     'website': 'www.odoomates.tech',

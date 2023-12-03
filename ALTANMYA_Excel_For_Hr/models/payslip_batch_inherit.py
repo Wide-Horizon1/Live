@@ -70,12 +70,16 @@ class HrPayslip(models.Model):
 
     @api.depends('name')
     def _compute_days(self):
+        print("i am here ")
         sum_days = 0.0
         for rec in self:
             for line in rec.worked_days_line_ids:
                 if line.work_entry_type_id.code == 'ATTEND' or line.work_entry_type_id.code == 'WORK100' :
+                    print("hello")
                     sum_days+=line.number_of_days
+                    print("sum isss----- -", sum_days)
             rec.worked_days= sum_days
+            print("work day ",sum_days, rec.worked_days )
 
     @api.depends('line_ids')
     def _compute_net(self):
@@ -113,7 +117,7 @@ class HrPayslip(models.Model):
 
             for worked_days_line in payslip.worked_days_line_ids:
                 workdays_name = worked_days_line.work_entry_type_id.code
-                print("work days is ", worked_days_line , workdays_name)
+                # print("work days is ", worked_days_line , workdays_name)
                 # # Perform custom calculations for the specific categories
                 if workdays_name == 'OVT1':
                     print("2")
@@ -127,12 +131,16 @@ class HrPayslip(models.Model):
                 #     category_sums['attendance'] += worked_days_line.number_of_days
 
             for field, value in category_sums.items():
-                print("categories is ", category_sums)
+                # print("categories is ", category_sums)
                 setattr(payslip, field, value)
 
-            payslip.basic_sal = payslip.basic_wage
-            payslip.day_value = payslip.basic_sal / 30
-            payslip.hour_cost =( payslip.basic_sal / 30 ) /8
+            if payslip.basic_sal :
+
+                payslip.basic_sal = payslip.basic_wage
+                payslip.day_value = payslip.basic_sal / 30
+                payslip.hour_cost =( payslip.basic_sal / 30 ) /8
+            else:
+                payslip.basic_sal = 0.0
 
 
 
