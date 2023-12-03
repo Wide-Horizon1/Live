@@ -125,6 +125,7 @@ class HrPayslip(models.Model):
         category_sums = {field: 0.0 for field in category_mapping.values()}
         for payslip in self:
             _LOGGER.info(" pay sip from haerererereerrererererer :",payslip)
+            _LOGGER.info(payslip)
 
             for line in payslip.line_ids:
                 category_name = line.category_id.name
@@ -150,7 +151,8 @@ class HrPayslip(models.Model):
             for field, value in category_sums.items():
                 # print("categories is ", category_sums)
                 setattr(payslip, field, value)
-
+            
+             _LOGGER.info(payslip.basic_sal )
             if payslip.basic_sal :
 
                 payslip.basic_sal = payslip.basic_wage
