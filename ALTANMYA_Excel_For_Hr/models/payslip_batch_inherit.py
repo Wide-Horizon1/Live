@@ -74,7 +74,7 @@ class HrPayslip(models.Model):
     @api.depends('name')
     def _compute_days(self):
         print("i am here ")
-        _LOGGER.info("basiccccccccccccc haerererereerrererererer :")
+        _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
         sum_days = 0.0
         for rec in self:
             for line in rec.worked_days_line_ids:
@@ -87,7 +87,7 @@ class HrPayslip(models.Model):
 
     @api.depends('line_ids')
     def _compute_net(self):
-        _LOGGER.info("basiccccccccccccc haerererereerrererererer :")
+        _LOGGER.info("basiccccccccccccc haerererereerrererererer neeeet :")
         category_mapping = {
             'Allowance': 'allowances',
             'Deduction': 'deductions',
