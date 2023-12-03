@@ -24,13 +24,16 @@ class HrLeaveTypeInherit(models.Model):
     main_date_to = fields.Date(string='', readonly=True)
     attachment = fields.Many2many('ir.attachment', string='Supporting Document', readonly=True)
 
-    def action_approve(self, approver=None):
-        super(HrLeaveTypeInherit, self).action_approve()
+    def _compute_request_status(self):
+        super(HrLeaveTypeInherit, self)._compute_request_status()
         for rec in self:
-            leave_ids = self.env['hr.leave'].search([('id', '=', rec.parent_id.id)])
-            leave_ids.action_draft()
-            leave_ids.action_confirm()
-            leave_ids.action_approve()
+            print("iiiiiiiiiiiiiiiii")
+            if rec.request_status == 'approved':
+                leave_ids = self.env['hr.leave'].search([('id', '=', rec.parent_id.id)])
+                leave_ids.action_draft()
+                leave_ids.action_confirm()
+                leave_ids.action_approve()
+                print("rrrrrrrrrrrrrrrrrrrrrrrrrr")
 
     def action_refuse(self, approver=None):
         super(HrLeaveTypeInherit, self).action_refuse()
