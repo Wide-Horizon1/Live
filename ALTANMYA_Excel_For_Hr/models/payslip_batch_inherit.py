@@ -76,9 +76,11 @@ class HrPayslip(models.Model):
     @api.depends('name')
     def _compute_days(self):
         print("i am here ")
-        _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :",self)
         sum_days = 0.0
         for rec in self:
+            _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
+            _LOGGER.info(rec)
+
             for line in rec.worked_days_line_ids:
                 if line.work_entry_type_id.code == 'ATTEND' or line.work_entry_type_id.code == 'WORK100' :
                     print("hello")
@@ -87,6 +89,7 @@ class HrPayslip(models.Model):
             rec.worked_days= sum_days
             print("work day ",sum_days, rec.worked_days )
             _LOGGER.info("work day :::::::::::::::;",sum_days ,rec.worked_days )
+            _LOGGER.info(sum_days )
 
 
     @api.depends('name')
