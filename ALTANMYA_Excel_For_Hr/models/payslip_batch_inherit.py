@@ -152,7 +152,7 @@ class HrPayslip(models.Model):
                 # print("categories is ", category_sums)
                 setattr(payslip, field, value)
             _LOGGER.info(payslip.basic_sal)   
-            if payslip.basic_sal :
+            if not payslip.basic_sal :
                 _LOGGER.info("payslip basiccc1111111111111111111111111c")
 
                 payslip.basic_sal = payslip.basic_wage
