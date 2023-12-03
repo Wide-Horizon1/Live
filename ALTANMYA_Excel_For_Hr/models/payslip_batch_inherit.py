@@ -157,6 +157,10 @@ class HrPayslip(models.Model):
                 payslip.basic_sal = payslip.basic_wage
                 payslip.day_value = payslip.basic_sal / 30
                 payslip.hour_cost =( payslip.basic_sal / 30 ) /8
+                _LOGGER.info("payslip basicccc")
+                _LOGGER.info(payslip.basic_sal)   
+
+
             else:
                 payslip.basic_sal = 0.0
 
