@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_payslip_batch" model="ir.ui.view">
+        <field name="name">hr.payslip.inherited</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="////button[9]" position="after">
+                <button string="Print Excel" name="%(ALTANMYA_Excel_For_Hr.action_create_excel_report)d" type="action"/>
+            </xpath>
+            <xpath expr="//sheet[1]/group[1]/field[6]" position="after">
+                <field name="emp_name" invisible="1"/>
+                <field name="emp_id" invisible="1"/>
+                <field name="house_wage" invisible="1"/>
+                <field name="allowances" invisible="1"/>
+                <field name="deductions" invisible="1"/>
+                <field name="worked_days"/>
+                <field name="basic_sal" invisible="1"/>
+                <field name="mobile_allowance" invisible="1"/>
+                <field name="transportation_allowance" invisible="1"/>
+                <field name="food_allowance" invisible="1"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
