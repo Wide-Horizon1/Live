@@ -75,7 +75,7 @@ class HrPayslip(models.Model):
                 'Advance': 'advance_discount',
                 'Penalty': 'penalty_deduction',
             }
-            _LOGGER.info("\ddddddddddddddddddddddddddddddd haerererereerrererererer :")
+            _LOGGER.info("\ddddddddddddddddddddddddddddddd haerererereerrererererer monthllllllllllllly :")
             category_sums = {field: 0.0 for field in category_mapping.values()}
             print("Cat sum are paaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ", category_sums)
 
