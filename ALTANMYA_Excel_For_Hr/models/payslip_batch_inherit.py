@@ -87,6 +87,8 @@ class HrPayslip(models.Model):
 
     @api.depends('line_ids')
     def _compute_net(self):
+        _LOGGER.info('basiccccccccccccc haerererereerrererererer :')
+
         category_mapping = {
             'Allowance': 'allowances',
             'Deduction': 'deductions',
