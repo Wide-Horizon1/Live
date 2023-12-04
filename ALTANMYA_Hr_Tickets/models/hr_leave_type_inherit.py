@@ -101,11 +101,4 @@ class HrLeaveInherit(models.Model):
                 print('approval request1111111111', approval_request_vals)
 
 
-    def action_refuse(self):
-        super(HrLeaveInherit, self).action_refuse()
-
-        for rec in self:
-            approval_request = rec.env['approval.request'].search([('parent_id', '=', rec.id)], limit=1)
-            print('approval request2222222222', approval_request)
-            if approval_request:
-                approval_request.write({'request_status': 'cancel'})
+    
