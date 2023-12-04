@@ -80,6 +80,7 @@ class HrPayslip(models.Model):
         for rec in self:
             _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
             _LOGGER.info(rec)
+            _LOGGER.info(self)
 
             for line in rec.worked_days_line_ids:
                 if line.work_entry_type_id.code == 'ATTEND' or line.work_entry_type_id.code == 'WORK100' :
