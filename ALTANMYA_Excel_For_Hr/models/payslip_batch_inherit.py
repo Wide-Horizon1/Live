@@ -123,8 +123,8 @@ class HrPayslip(models.Model):
             'Penalty': 'penalty_deduction',
         }
         _LOGGER.info("\ddddddddddddddddddddddddddddddd haerererereerrererererer :")
-        category_sums = {field: 0.0 for field in category_mapping.values()}
         for payslip in self:
+            category_sums = {field: 0.0 for field in category_mapping.values()}
             _LOGGER.info(" pay sip from haerererereerrererererer :",payslip)
             _LOGGER.info(payslip)
 
