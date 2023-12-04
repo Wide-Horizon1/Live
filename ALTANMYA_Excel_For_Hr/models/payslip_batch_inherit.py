@@ -4,6 +4,9 @@ from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
+import logging
+
+_LOGGER = logging.getLogger(__name__)
 
 class HrPayslip(models.Model):
     _inherit = "hr.payslip"
@@ -13,22 +16,22 @@ class HrPayslip(models.Model):
     house_wage=fields.Float(compute='_compute_net')
     allowances=fields.Float(compute='_compute_net')
     deductions =fields.Float(compute='_compute_net')
-    mobile_allowance =fields.Float(compute='_compute_net')
-    transportation_allowance =fields.Float(compute='_compute_net')
-    food_allowance =fields.Float(compute='_compute_net')
-    nature_of_work=fields.Float(compute='_compute_net')
-    total_allowances=fields.Float(compute='_compute_net')
-    other_allowances =fields.Float(compute='_compute_net')
-    busniess_trip =fields.Float(compute='_compute_net')
+    mobile_allowance =fields.Float(compute='_compute_net',default=0.0)
+    transportation_allowance =fields.Float(compute='_compute_net',default=0.0)
+    food_allowance =fields.Float(compute='_compute_net',default=0.0)
+    nature_of_work=fields.Float(compute='_compute_net',default=0.0)
+    total_allowances=fields.Float(compute='_compute_net',default=0.0)
+    other_allowances =fields.Float(compute='_compute_net',default=0.0)
+    busniess_trip =fields.Float(compute='_compute_net',default=0.0)
     worked_days= fields.Float(string = "worked days" , compute='_compute_days',default=0.0)
     basic_sal = fields.Float(string = "Baseic days" , compute='_compute_net')
-    rewards = fields.Float(string = "Rewards " , compute='_compute_net')
-    retrived = fields.Float(string = "Retrived " , compute='_compute_net')
-    day_value = fields.Float(string = "Day value ")
-    hour_cost = fields.Float(string = "Hour Cost")
+    rewards = fields.Float(string = "Rewards " , compute='_compute_net',default=0.0)
+    retrived = fields.Float(string = "Retrived " , compute='_compute_net',default=0.0)
+    day_value = fields.Float(string = "Day value ",default=0.0)
+    hour_cost = fields.Float(string = "Hour Cost",default=0.0)
     additional_constant = fields.Float(string = "Rewards " , compute='_compute_net')
     over_hours = fields.Float(string = "overtime hour",compute='_compute_net' )
-    over_days = fields.Float(string = "overtime days",compute='_compute_net', )
+    over_days = fields.Float(string = "overtime days",compute='_compute_net' )
     over_value = fields.Float(string = "overtime vlue", compute='_compute_net')
     accrual_total  = fields.Float(string = "Accrual total  ", compute='_compute_net')
     total_for_bank = fields.Float(string="Total ")
@@ -39,6 +42,8 @@ class HrPayslip(models.Model):
     advance_discount = fields.Float(string = "Advance Discount ", compute='_compute_net')
     penalty_deduction = fields.Float(string = "Penalty deduction ", compute='_compute_net')
     total_deduction = fields.Float(string="Total deduction")
+
+
 
     def prepare_excel_data(self):
         data = {
@@ -70,15 +75,29 @@ class HrPayslip(models.Model):
 
     @api.depends('name')
     def _compute_days(self):
-        sum_days = 0.0
+        print("i am here ")
         for rec in self:
+            
+            sum_days = 0.0
+            _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
+            _LOGGER.info(rec)
+            _LOGGER.info(self)
+
             for line in rec.worked_days_line_ids:
                 if line.work_entry_type_id.code == 'ATTEND' or line.work_entry_type_id.code == 'WORK100' :
+                    print("hello")
                     sum_days+=line.number_of_days
+                    _LOGGER.info(sum_days)
+                    print("sum isss----- -", sum_days)
             rec.worked_days= sum_days
+            print("work day ",sum_days, rec.worked_days )
+            _LOGGER.info("work day :::::::::::::::;" )
+            _LOGGER.info(sum_days )
 
-    @api.depends('line_ids')
+
+    @api.depends('name')
     def _compute_net(self):
+        _LOGGER.info("basiccccccccccccc haerererereerrererererer neeeet :")
         category_mapping = {
             'Allowance': 'allowances',
             'Deduction': 'deductions',
@@ -103,8 +122,12 @@ class HrPayslip(models.Model):
             'Advance': 'advance_discount',
             'Penalty': 'penalty_deduction',
         }
-        category_sums = {field: 0.0 for field in category_mapping.values()}
+        _LOGGER.info("\ddddddddddddddddddddddddddddddd haerererereerrererererer :")
         for payslip in self:
+            category_sums = {field: 0.0 for field in category_mapping.values()}
+            _LOGGER.info(" pay sip from haerererereerrererererer :",payslip)
+            _LOGGER.info(payslip)
+
             for line in payslip.line_ids:
                 category_name = line.category_id.name
                 if category_name in category_mapping:
@@ -113,7 +136,7 @@ class HrPayslip(models.Model):
 
             for worked_days_line in payslip.worked_days_line_ids:
                 workdays_name = worked_days_line.work_entry_type_id.code
-                print("work days is ", worked_days_line , workdays_name)
+                # print("work days is ", worked_days_line , workdays_name)
                 # # Perform custom calculations for the specific categories
                 if workdays_name == 'OVT1':
                     print("2")
@@ -127,12 +150,21 @@ class HrPayslip(models.Model):
                 #     category_sums['attendance'] += worked_days_line.number_of_days
 
             for field, value in category_sums.items():
-                print("categories is ", category_sums)
+                # print("categories is ", category_sums)
                 setattr(payslip, field, value)
+            _LOGGER.info(payslip.basic_sal)   
+            if not payslip.basic_sal :
+                _LOGGER.info("payslip basiccc1111111111111111111111111c")
 
-            payslip.basic_sal = payslip.basic_wage
-            payslip.day_value = payslip.basic_sal / 30
-            payslip.hour_cost =( payslip.basic_sal / 30 ) /8
+                payslip.basic_sal = payslip.basic_wage
+                payslip.day_value = payslip.basic_sal / 30
+                payslip.hour_cost =( payslip.basic_sal / 30 ) /8
+                _LOGGER.info("payslip basicccc")
+                _LOGGER.info(payslip.basic_sal)   
+
+
+            else:
+                payslip.basic_sal = 0.0
 
 
 

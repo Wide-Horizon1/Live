@@ -1,6 +1,10 @@
 from odoo import api, fields, models
 import logging
 
+
+
+
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -11,12 +15,18 @@ class Createexcelwizard(models.TransientModel):
     def prepare_excel_data(self):
 
         payslip_ids = self.env['hr.payslip'].browse(self._context.get('active_ids', list()))
+        _LOGGER.info("Wixaaaaaaaaaaaaaaaaaaaard :")
+        _LOGGER.info(payslip_ids)
         data_list = []
         if payslip_ids:
             print("paslips ids is ", payslip_ids)
             for rec in payslip_ids:
                 forpayslips = self.env['hr.employee'].search([('id', '=', rec.employee_id.id)])
                 print("emplyeeeeeid <<<<<<<<<<<<<<<<",forpayslips)
+                _LOGGER.info('emplyeeeeeid <<<<<<<<<<<<<<<<', forpayslips)
+                _LOGGER.info(forpayslips)
+                
+
                 data1 = {
                     'employee_id':forpayslips.id,
                     'emp_name': rec.employee_id.name,
@@ -56,6 +66,10 @@ class Createexcelwizard(models.TransientModel):
                 }
                 data_list.append(data1)
             print("data is ", data_list)
+            _LOGGER.info('data list :')
+            _LOGGER.info( data_list)
+            _LOGGER.info('data list 222222222222222 :')
+            _LOGGER.info( data1)
             data = {
                 'records': data_list,
 
