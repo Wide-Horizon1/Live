@@ -74,8 +74,13 @@ class ExcelPayrollXlsx(models.AbstractModel):
             print("employee_id",employee_id.get('employee_id'))
             emp = self.env['hr.employee'].sudo().browse(employee_id.get('employee_id'))
             print("emp iddddd iss---------------- ",emp.id)
+            _LOGGER.info("employee id in sh ________22222222_______________________- :")
+            _LOGGER.info(emp)
             emp_id = employee_id.get('employee_id')
             print("dataaaa get ",emp_id)
+            _LOGGER.info("data get sh ________22222222_______________________- :")
+            _LOGGER.info(emp_id)
+            
             # Check if the employee is already in the dictionary
             if emp_id in employee_data:
                 employee = employee_data[emp_id]
