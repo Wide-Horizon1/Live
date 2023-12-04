@@ -121,6 +121,13 @@ class ExcelPayrollXlsx(models.AbstractModel):
             employee['total_deduction'] += employee_id.get('total_deduction', 0.0)
             employee['net_sal'] += employee_id.get('net_sal', 0.0)
 
+
+            _LOGGER.info("emplyee dataaa ________33333333_________- :")
+            _LOGGER.info(employee['worked_days'])
+
+
+            
+
             # Add more fields as needed
 
             # Update the employee's data in the dictionary
