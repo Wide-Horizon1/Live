@@ -68,6 +68,9 @@ class ExcelPayrollXlsx(models.AbstractModel):
         row = 1
         employee_data = {}
         for employee_id in data['records']:
+            _LOGGER.info("employee id in sh _______________________________- :")
+            _LOGGER.info(employee_id.get('employee_id'))
+            
             print("employee_id",employee_id.get('employee_id'))
             emp = self.env['hr.employee'].sudo().browse(employee_id.get('employee_id'))
             print("emp iddddd iss---------------- ",emp.id)
