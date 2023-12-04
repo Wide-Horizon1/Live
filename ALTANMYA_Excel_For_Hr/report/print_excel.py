@@ -124,6 +124,8 @@ class ExcelPayrollXlsx(models.AbstractModel):
 
             _LOGGER.info("emplyee dataaa ________33333333_________- :")
             _LOGGER.info(employee['worked_days'])
+            _LOGGER.info("emplyee dataaa ________44444444444_________- :")
+            _LOGGER.info(employee_id.get('worked_days', 0.0))
 
 
             
