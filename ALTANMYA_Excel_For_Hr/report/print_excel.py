@@ -90,6 +90,8 @@ class ExcelPayrollXlsx(models.AbstractModel):
                 employee['emp_id'] = employee_id.get('emp_id')
                 employee['emp_name'] = employee_id.get('emp_name')
                     # Initialize a new employee entry
+            _LOGGER.info("emplyee dataaa ########44444444444######## :")
+            _LOGGER.info(employee_id)
 
             # Aggregate the data for the employee
             employee['worked_days'] += employee_id.get('worked_days', 0.0)
