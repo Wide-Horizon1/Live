@@ -86,7 +86,7 @@ class HrLeaveTypeInherit(models.Model):
     def create(self, vals_list):
         res = super(HrLeaveTypeInherit, self).create(vals_list)
         for rec in res:
-            print("dssadasdasdasdasdasdad",self._context.get('default_created_from_calendar'))
+            print("dssadasdasdasdasdasdad",self._context.get('default_created_from_calendar'),rec.check_true_for_ticket)
             if self._context.get('default_created_from_calendar') == True:
                 print('sho ma kan', rec.number_of_ticket_allowance_)
                 number_of_tickets_requested = rec.number_of_ticket_allowance_ or 0
@@ -115,6 +115,7 @@ class HrLeaveTypeInherit(models.Model):
                     'main_date_to': rec.request_date_to,
                     'mode': to_mode,
                     'number_of_tickets_': number_of_tickets_requested,
+                    'check_from_leave':rec.check_true_for_ticket,
                     'attachment': [(6, 0, [rec.supported_attachment_ids.id])] if rec.supported_attachment_ids else False
                 }
                 if rec.check_true:
