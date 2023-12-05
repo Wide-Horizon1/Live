@@ -94,11 +94,18 @@ class HrLeaveInherit(models.Model):
                     'check_from_leave': rec.check_true_for_ticket,
                     'req_date': rec.req_date,
                     'state_of_req_approval': 'approved',
-                    'parent_id': rec.id
+                    'parent_id': rec.id,
+                    'refuse_butt': True
                 }
                 approval_request_vals = rec.env['approval.request'].create(approval_request)
                 approval_request_vals.action_confirm()
                 print('approval request1111111111', approval_request_vals)
 
-
-    
+    # def action_refuse(self):
+    #     super(HrLeaveInherit, self).action_refuse()
+    #
+    #     for rec in self:
+    #         approval_request = rec.env['approval.request'].search(
+    #             [('parent_id', '=', rec.id), ('state_of_req_approval', '=', 'approved'), ('refuse_butt', '=', True)], limit=1)
+    #         if approval_request:
+    #             approval_request.action_refuse()

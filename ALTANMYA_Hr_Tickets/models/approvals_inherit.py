@@ -32,6 +32,7 @@ class ApprovalRequestInherit(models.Model):
     check_from_leave = fields.Boolean()
     check_from_leave_copy = fields.Boolean()
     hide_butt = fields.Boolean(default=False)
+    refuse_butt = fields.Boolean(default=False)
     state_of_req_approval = fields.Char('')
 
 
@@ -39,7 +40,7 @@ class ApprovalRequestInherit(models.Model):
         super(ApprovalRequestInherit, self)._compute_request_status()
         employees = self.env['hr.employee'].search([('id', '=', self.employee_id.id)])
         for rec in self:
-            print('before$$$$$$$$', self.check_from_leave)
+            print('before$$$$$$$$', self.check_from_leave,rec.id)
             rec.check_from_leave_copy = self.check_from_leave
             if rec.request_status == 'approved':
                 self.req_date = datetime.now()
@@ -87,9 +88,10 @@ class ApprovalRequestInherit(models.Model):
                                                               'appr_req_id': rec.id})]})
                         print('dateeeeeeeeeee00000', rec.id)
             elif rec.request_status == 'refused':
-                print('refuseeeeeeeeeeed', self.check_from_leave)
+                print('refuseeeeeeeeeeed', self.check_from_leave,rec.state_of_req_approval)
                 if rec.state_of_req_approval == 'approved':
-                    print('kiko')
+
+                    print('kiko',rec.id,rec.refuse_butt)
                     approved_val = self.env['approval.request'].search(
                         [('request_status', '=', 'refused'), ('category_id.allowance_tickets', '=', True), ('state_of_req_approval', '=', 'approved')],
                         order="id desc", limit=1)
