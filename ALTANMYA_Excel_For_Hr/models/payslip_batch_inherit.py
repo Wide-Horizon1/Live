@@ -24,7 +24,7 @@ class HrPayslip(models.Model):
     other_allowances =fields.Float(compute='_compute_net',default=0.0)
     busniess_trip =fields.Float(compute='_compute_net',default=0.0)
     worked_days= fields.Float(string = "worked days" , compute='_compute_days',default=0.0)
-    basic_sal = fields.Float(string = "Baseic days" , compute='_compute_net')
+    basic_sal = fields.Float(string = "Baseic days" , compute='_compute_net',default=0.0)
     rewards = fields.Float(string = "Rewards " , compute='_compute_net',default=0.0)
     retrived = fields.Float(string = "Retrived " , compute='_compute_net',default=0.0)
     day_value = fields.Float(string = "Day value ",default=0.0)
@@ -42,6 +42,75 @@ class HrPayslip(models.Model):
     advance_discount = fields.Float(string = "Advance Discount ", compute='_compute_net')
     penalty_deduction = fields.Float(string = "Penalty deduction ", compute='_compute_net')
     total_deduction = fields.Float(string="Total deduction")
+
+    @api.model
+    def create(self, vals):
+        payslipsss = super(HrPayslip, self).create(vals)
+        print("exceeeeeeeeeeeeeeeeeeeeeeel")
+        for payslipp in payslipsss:
+            category_mapping = {
+                'Allowance': 'allowances',
+                'Deduction': 'deductions',
+                'House': 'house_wage',
+                'Transportation': 'transportation_allowance',
+                'Mobile': 'mobile_allowance',
+                'Food': 'food_allowance',
+                'Nature': 'nature_of_work',
+                'Other': 'other_allowances',
+                'Rewards': 'rewards',
+                'Retrived': 'retrived',
+                'Totalallowances': 'total_allowances',
+                'BusinessTrip': 'busniess_trip',
+                'FixedOvertime': 'additional_constant',
+                'OVT1': 'over_value',
+                'OVTD': 'over_days',
+                'OVTH': 'over_hours',
+                'Gosi': 'insurance_discount',
+                'Training': 'training_discount',
+                'TrafficFine': 'traffic_fine_deduction',
+                'AramcoLost': 'aramco_lost',
+                'Advance': 'advance_discount',
+                'Penalty': 'penalty_deduction',
+            }
+            _LOGGER.info("\ddddddddddddddddddddddddddddddd haerererereerrererererer :")
+            category_sums = {field: 0.0 for field in category_mapping.values()}
+            print("Cat sum are paaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ", category_sums)
+            print("paaaaaaaaaaay is ", payslipp)
+            for line in payslipp.line_ids:
+                print("lineeeeeeeeeeeeee", line)
+                category_name = line.category_id.name
+                if category_name in category_mapping:
+                    field_name = category_mapping[category_name]
+                    category_sums[field_name] += line.total
+
+            for worked_days_line in payslipp.worked_days_line_ids:
+                workdays_name = worked_days_line.work_entry_type_id.code
+                # print("work days is ", worked_days_line , workdays_name)
+                # # Perform custom calculations for the specific categories
+                if workdays_name == 'OVT1':
+                    print("2")
+                    category_sums['over_days'] += worked_days_line.number_of_days
+                    category_sums['over_hours'] += worked_days_line.number_of_hours
+                # elif workdays_name == 'OVTH':
+                #     print("3")
+
+                # if workdays_name == 'Attendance':
+                #     print("4")
+                #     category_sums['attendance'] += worked_days_line.number_of_days
+
+            for field, value in category_sums.items():
+                # print("categories is ", category_sums)
+                setattr(payslipp, field, value)
+
+            if payslipp.basic_sal:
+
+                payslipp.basic_sal = payslipp.basic_wage
+                payslipp.day_value = payslipp.basic_sal / 30
+                payslipp.hour_cost = (payslipp.basic_sal / 30) / 8
+            else:
+                payslipp.basic_sal = 0.0
+
+
 
 
 
@@ -76,28 +145,22 @@ class HrPayslip(models.Model):
     @api.depends('name')
     def _compute_days(self):
         print("i am here ")
+        _LOGGER.info("basiccccccccccccc haerererereerrererererer :")
+        sum_days = 0.0
         for rec in self:
-            
-            sum_days = 0.0
-            _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
-            _LOGGER.info(rec)
-            _LOGGER.info(self)
-
             for line in rec.worked_days_line_ids:
                 if line.work_entry_type_id.code == 'ATTEND' or line.work_entry_type_id.code == 'WORK100' :
                     print("hello")
                     sum_days+=line.number_of_days
-                    _LOGGER.info(sum_days)
                     print("sum isss----- -", sum_days)
             rec.worked_days= sum_days
             print("work day ",sum_days, rec.worked_days )
-            _LOGGER.info("work day :::::::::::::::;" )
-            _LOGGER.info(sum_days )
 
-
-    @api.depends('name')
+    @api.depends('line_ids')
     def _compute_net(self):
-        _LOGGER.info("basiccccccccccccc haerererereerrererererer neeeet :")
+        print("Cat ssssssssssssssss are " )
+
+        _LOGGER.info("basiccccccccccccc haerererereerrererererer :")
         category_mapping = {
             'Allowance': 'allowances',
             'Deduction': 'deductions',
@@ -123,11 +186,10 @@ class HrPayslip(models.Model):
             'Penalty': 'penalty_deduction',
         }
         _LOGGER.info("\ddddddddddddddddddddddddddddddd haerererereerrererererer :")
+        category_sums = {field: 0.0 for field in category_mapping.values()}
+        print("Cat sum are " , category_sums)
         for payslip in self:
-            category_sums = {field: 0.0 for field in category_mapping.values()}
-            _LOGGER.info(" pay sip from haerererereerrererererer :",payslip)
-            _LOGGER.info(payslip)
-
+            print("paaaaaaaaaaay isssssssssssssss ", payslip)
             for line in payslip.line_ids:
                 category_name = line.category_id.name
                 if category_name in category_mapping:
@@ -152,17 +214,12 @@ class HrPayslip(models.Model):
             for field, value in category_sums.items():
                 # print("categories is ", category_sums)
                 setattr(payslip, field, value)
-            _LOGGER.info(payslip.basic_sal)   
-            if not payslip.basic_sal :
-                _LOGGER.info("payslip basiccc1111111111111111111111111c")
+
+            if payslip.basic_sal :
 
                 payslip.basic_sal = payslip.basic_wage
                 payslip.day_value = payslip.basic_sal / 30
                 payslip.hour_cost =( payslip.basic_sal / 30 ) /8
-                _LOGGER.info("payslip basicccc")
-                _LOGGER.info(payslip.basic_sal)   
-
-
             else:
                 payslip.basic_sal = 0.0
 

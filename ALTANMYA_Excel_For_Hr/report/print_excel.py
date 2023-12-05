@@ -68,19 +68,11 @@ class ExcelPayrollXlsx(models.AbstractModel):
         row = 1
         employee_data = {}
         for employee_id in data['records']:
-            _LOGGER.info("employee id in sh _______________________________- :")
-            _LOGGER.info(employee_id.get('employee_id'))
-            
             print("employee_id",employee_id.get('employee_id'))
             emp = self.env['hr.employee'].sudo().browse(employee_id.get('employee_id'))
             print("emp iddddd iss---------------- ",emp.id)
-            _LOGGER.info("employee id in sh ________22222222_______________________- :")
-            _LOGGER.info(emp)
             emp_id = employee_id.get('employee_id')
             print("dataaaa get ",emp_id)
-            _LOGGER.info("data get sh ________22222222_______________________- :")
-            _LOGGER.info(emp_id)
-            
             # Check if the employee is already in the dictionary
             if emp_id in employee_data:
                 employee = employee_data[emp_id]
@@ -90,8 +82,6 @@ class ExcelPayrollXlsx(models.AbstractModel):
                 employee['emp_id'] = employee_id.get('emp_id')
                 employee['emp_name'] = employee_id.get('emp_name')
                     # Initialize a new employee entry
-            _LOGGER.info("emplyee dataaa ########44444444444######## :")
-            _LOGGER.info(employee_id)
 
             # Aggregate the data for the employee
             employee['worked_days'] += employee_id.get('worked_days', 0.0)
@@ -122,15 +112,6 @@ class ExcelPayrollXlsx(models.AbstractModel):
             employee['penalty_deduction'] += employee_id.get('penalty_deduction', 0.0)
             employee['total_deduction'] += employee_id.get('total_deduction', 0.0)
             employee['net_sal'] += employee_id.get('net_sal', 0.0)
-
-
-            _LOGGER.info("emplyee dataaa ________33333333_________- :")
-            _LOGGER.info(employee['worked_days'])
-            _LOGGER.info("emplyee dataaa ________44444444444_________- :")
-            _LOGGER.info(employee_id.get('worked_days', 0.0))
-
-
-            
 
             # Add more fields as needed
 
