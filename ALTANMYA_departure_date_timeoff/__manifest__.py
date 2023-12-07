@@ -10,7 +10,7 @@
     'depends': ['hr_holidays'],
     'data': [
         'views/AccrualHolidaysFromDateDepartureView.xml',
-        'views/allocation_inherit_view.xml'
+        #'views/allocation_inherit_view.xml'
     ],
     'demo': [],
     'installable': True,
