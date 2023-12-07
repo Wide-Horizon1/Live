@@ -20,7 +20,7 @@ class AccrualHolidaysFromDateDeparture(models.Model):
     # @api.onchange('request_date_from')
     def _get_date_possible(self):
         print("archiveddddddddd")
-        self.possible_days = ""
+        self.possible_days = 0.0
         for employee in self:
             print("archive", employee.departure_date)
             # employee.possible_days = 0
