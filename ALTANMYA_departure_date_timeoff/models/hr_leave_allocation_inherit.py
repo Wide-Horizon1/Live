@@ -29,7 +29,7 @@ class Hrleaveallocation(models.Model):
                 _logger.info(current_level.accrual_plan_id)
                 while nextcall <= leave_start_date:
                     print('i : ', i)
-                    nextcall = current_level._get_next_date(allocation.employee_id.first_contract_date)
+                    nextcall = current_level._get_next_date(allocation.nextcall)
                     print('hiiii', nextcall)
                     i += 1
                     allocation.type_from_compute = allocation.holiday_status_id
