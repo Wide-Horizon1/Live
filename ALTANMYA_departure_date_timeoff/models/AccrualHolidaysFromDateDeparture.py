@@ -46,7 +46,7 @@ class AccrualHolidaysFromDateDeparture(models.Model):
                         # Perform the necessary computations
                         mapped_days = allocation.holiday_status_id.get_employees_days(
                             (allocation.employee_id | allocation.employee_ids).ids,
-                            employee.departure_date)
+                            employee.departure_date.date())
                         _logger.info("  mapped days in calc +++++++++++++")
                         _logger.info(mapped_days)
                         _logger.info( allocation.holiday_status_id)
