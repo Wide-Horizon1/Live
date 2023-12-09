@@ -1,6 +1,12 @@
 from odoo import models, fields, api
 from odoo.tools import float_compare, format_date
 
+import logging
+
+
+_logger = logging.getLogger(__name__)
+
+
 
 class AccrualHolidaysFromDateDeparture(models.Model):
     _inherit = 'hr.employee'
