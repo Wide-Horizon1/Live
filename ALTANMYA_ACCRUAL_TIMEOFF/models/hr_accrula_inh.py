@@ -161,11 +161,10 @@ class test(models.Model):
             if current_level:
                 nextcall = current_level._get_next_date(allocation.nextcall)
                 print('next call', nextcall, leave_start_date)
-                _logger.info("current level ---------------:")
+                _logger.info("current_level mmmmmmmmmmm")
+                _logger.info(nextcall)
                 _logger.info(current_level)
                 _logger.info(current_level.accrual_plan_id)
-                _logger.info("next call ---------------:")
-                _logger.info(nextcall)
                 while nextcall <= leave_start_date:
                     print('i : ', i)
                     nextcall = current_level._get_next_date(nextcall)
