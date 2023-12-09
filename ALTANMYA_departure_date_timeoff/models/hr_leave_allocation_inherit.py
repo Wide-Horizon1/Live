@@ -22,7 +22,7 @@ class Hrleaveallocation(models.Model):
             if current_level:
                 print('current level : ', current_level.accrual_plan_id, current_level_idx)
                 print("i am here ")
-                nextcall = current_level._get_next_date(allocation.employee_id.first_contract_date)
+                nextcall = current_level._get_next_date(allocation.nextcall)
                 print('next call', nextcall, leave_start_date)
                 _logger.info("current_level")
                 _logger.info(nextcall)
