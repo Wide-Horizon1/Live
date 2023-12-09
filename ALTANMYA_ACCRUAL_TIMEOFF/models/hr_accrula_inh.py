@@ -52,7 +52,12 @@ class HrLeaveInh(models.Model):
                         (holiday.employee_id | holiday.employee_ids).ids,
                         holiday.date_from.date())
                     _logger.info("  mapped days in  +++++++++++++")
-                    _logger.info(mapped_days)
+                    _logger.info(self.holiday_status_id)
+                    _logger.info(holiday.employee_id)
+                    _logger.info((holiday.employee_id | holiday.employee_ids).ids)
+                    _logger.info( holiday.date_from.date())
+
+
                     if holiday.holiday_type != 'employee' \
                             or not holiday.employee_id and not holiday.employee_ids \
                             or holiday.holiday_status_id.requires_allocation == 'no':
