@@ -49,6 +49,10 @@ class AccrualHolidaysFromDateDeparture(models.Model):
                             employee.departure_date)
                         _logger.info("  mapped days in calc +++++++++++++")
                         _logger.info(mapped_days)
+                        _logger.info( allocation.holiday_status_id)
+                        _logger.info(holiday.employee_id)
+                        _logger.info((allocation.employee_id | allocation.employee_ids).ids)
+                        _logger.info(employee.departure_date)
                         if allocation.holiday_type != 'employee' \
                                 or not allocation.employee_id \
                                 or allocation.holiday_status_id.requires_allocation == 'no':
