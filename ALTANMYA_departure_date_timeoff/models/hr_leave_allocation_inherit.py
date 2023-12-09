@@ -25,6 +25,7 @@ class Hrleaveallocation(models.Model):
                 nextcall = current_level._get_next_date(allocation.employee_id.first_contract_date)
                 print('next call', nextcall, leave_start_date)
                 _logger.info("current_level")
+                _logger.info(nextcall)
                 _logger.info(current_level)
                 _logger.info(current_level.accrual_plan_id)
                 while nextcall <= leave_start_date:
