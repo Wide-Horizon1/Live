@@ -158,6 +158,7 @@ class test(models.Model):
             print('allocation : ', allocation, allocation.nextcall)
             _logger.info("current level ---------------:")
             _logger.info(current_level)
+            _logger.info(current_level.accrual_plan_id)
 
             forcasted_days = 0
             if current_level:
