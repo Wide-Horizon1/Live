@@ -51,6 +51,8 @@ class HrLeaveInh(models.Model):
                     mapped_days = self.holiday_status_id.get_employees_days(
                         (holiday.employee_id | holiday.employee_ids).ids,
                         holiday.date_from.date())
+                    _logger.info("  mapped days in  +++++++++++++")
+                    _logger.info(mapped_days)
                     if holiday.holiday_type != 'employee' \
                             or not holiday.employee_id and not holiday.employee_ids \
                             or holiday.holiday_status_id.requires_allocation == 'no':
