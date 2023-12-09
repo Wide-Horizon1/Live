@@ -156,14 +156,14 @@ class test(models.Model):
             i = 0
             (current_level, current_level_idx) = allocation._get_current_accrual_plan_level_id(allocation.nextcall)
             print('allocation : ', allocation, allocation.nextcall)
-            _logger.info("current level ---------------:")
-            _logger.info(current_level)
-            _logger.info(current_level.accrual_plan_id)
 
             forcasted_days = 0
             if current_level:
                 nextcall = current_level._get_next_date(allocation.nextcall)
                 print('next call', nextcall, leave_start_date)
+                _logger.info("current level ---------------:")
+                _logger.info(current_level)
+                _logger.info(current_level.accrual_plan_id)
                 _logger.info("next call ---------------:")
                 _logger.info(nextcall)
                 while nextcall <= leave_start_date:
