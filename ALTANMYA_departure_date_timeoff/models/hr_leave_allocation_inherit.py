@@ -35,9 +35,9 @@ class Hrleaveallocation(models.Model):
                     allocation.type_from_compute = allocation.holiday_status_id
                 forcasted_days = i * current_level.added_value
                 print('gegege...', forcasted_days)
-                _logger.info(" forcassteeed in calcuatrq3y+++++++++++++)
+                _logger.info(" forcassteeed in calcuatrq3y+++++++++++++")
                 _logger.info(forcasted_days)
-                _logger.info(" rate in calcuatrq3y+++++++++++++)
+                _logger.info(" rate in calcuatrq3y+++++++++++++")
                 _logger.info(current_level.added_value)
                 print('geg22ege...', current_level.added_value)
                 
