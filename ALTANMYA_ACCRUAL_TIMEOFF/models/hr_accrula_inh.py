@@ -62,6 +62,10 @@ class HrLeaveInh(models.Model):
                         allocation = self.env['hr.leave.allocation'].search([('employee_id', '=', holiday.employee_id.id),
                                                                              ('allocation_type', '=', 'accrual')])
                         m = allocation.get_total_invoked(holiday.request_date_from)
+                        _logger.info("  mmmmmmmmmmmm +++++++++++++")
+                        _logger.info(m)
+                        _logger.info("  virtual_remaining_leaves +++++++++++++")
+                        _logger.info(leave_days['virtual_remaining_leaves'])
 
                         holiday.possible_days = m + leave_days['virtual_remaining_leaves']
                         print('self.possible_days..', holiday.possible_days)
