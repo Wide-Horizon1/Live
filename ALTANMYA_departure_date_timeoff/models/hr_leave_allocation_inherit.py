@@ -1,6 +1,10 @@
 from odoo import models, fields, api
 from odoo.tools import float_compare, format_date
 from odoo.tools.date_utils import get_timedelta
+import logging
+
+
+_logger = logging.getLogger(__name__)
 
 
 class Hrleaveallocation(models.Model):
@@ -20,15 +24,23 @@ class Hrleaveallocation(models.Model):
                 print("i am here ")
                 nextcall = current_level._get_next_date(allocation.employee_id.first_contract_date)
                 print('next call', nextcall, leave_start_date)
+                _logger.info("current_level")
+                _logger.info(current_level)
+                _logger.info(current_level.accrual_plan_id)
                 while nextcall <= leave_start_date:
                     print('i : ', i)
-                    nextcall = current_level._get_next_date(nextcall)
+                    nextcall = current_level._get_next_date(allocation.employee_id.first_contract_date)
                     print('hiiii', nextcall)
                     i += 1
                     allocation.type_from_compute = allocation.holiday_status_id
                 forcasted_days = i * current_level.added_value
                 print('gegege...', forcasted_days)
+                _logger.info(" forcassteeed in calcuatrq3y+++++++++++++)
+                _logger.info(forcasted_days)
+                _logger.info(" rate in calcuatrq3y+++++++++++++)
+                _logger.info(current_level.added_value)
                 print('geg22ege...', current_level.added_value)
+                
         return forcasted_days
 
         # if self._get_next_date_edited(self.last)
