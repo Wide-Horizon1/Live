@@ -55,6 +55,8 @@ class AccrualHolidaysFromDateDeparture(models.Model):
                             print("lllllllllll", leave_days)
                             m = allocation.get_total_days(employee.departure_date)
                             print("mmmmmmmmmmmm", m)
+                            _logger.info("  mmmmmmm in calc +++++++++++++")
+                            _logger.info(m)
 
                             employee.possible_days = m + leave_days['virtual_remaining_leaves']
                             print('self.possible_days..', employee.possible_days)
