@@ -83,7 +83,7 @@ class HrLeaveInherit(models.Model):
             name = rec.env['hr.leave.type'].browse(self.holiday_status_id.id)
             print("approval cat is ", approval_cat.name, rec.state_of_req, employee_id, self.employee_id_)
             rec.req_date = datetime.now()
-            if approval_cat:
+            if approval_cat and rec.ticket_allowance_ :
                 print("action approve from leave ##############", rec.check_true_for_ticket)
                 approval_request = {
                     'number_of_tickets_': number_of_tickets_requested,
