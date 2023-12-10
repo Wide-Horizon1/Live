@@ -46,7 +46,6 @@ class AccrualHolidaysFromDateDeparture(models.Model):
                         # print('b6e511115 111..', allocation.holiday_status_id.Forecast_Future_Allocation)
                         # if aco_hr_leave:
                         # Perform the necessary computations
-                        allocation.employee_ids = allocation.employee_id.id
                         mapped_days = allocation.holiday_status_id.get_employees_days(
                             (allocation.employee_id | allocation.employee_ids).ids,
                             employee.departure_date)
@@ -55,7 +54,7 @@ class AccrualHolidaysFromDateDeparture(models.Model):
                         _logger.info( allocation.holiday_status_id)
                         _logger.info(allocation.employee_id)
                         _logger.info(allocation.employee_ids)
-                        _logger.info((allocation.employee_id | allocation.employee_ids).ids)
+                        _logger.info((allocation.employee_id | allocation.employee_id).ids)
                         _logger.info(employee.departure_date)
                         if allocation.holiday_type != 'employee' \
                                 or not allocation.employee_id \
