@@ -47,7 +47,7 @@ class AccrualHolidaysFromDateDeparture(models.Model):
                         # if aco_hr_leave:
                         # Perform the necessary computations
                         mapped_days = allocation.holiday_status_id.get_employees_days(
-                            (allocation.employee_id | allocation.employee_ids).ids,
+                            (allocation.employee_id | allocation.employee_id).ids,
                             employee.departure_date)
                         _logger.info("  mapped days in calc +++++++++++++")
                         _logger.info(mapped_days)
