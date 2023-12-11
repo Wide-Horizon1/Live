@@ -1,5 +1,5 @@
 {
-    'name': 'ALTANMYA_CALCULATING_ANNUAL',
+    'name': 'ALTANMYA_departure_date',
     'version': '1.0',
     'summary': 'ALTANMYA CALCULATING ANNUAL LEAVE BALANCE AT DEPARTURE DATE',
     'description': """ALTANMYA CALCULATING ANNUAL LEAVE BALANCE AT DEPARTURE DATE""",
