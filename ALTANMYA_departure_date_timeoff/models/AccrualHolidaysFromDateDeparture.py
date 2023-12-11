@@ -29,7 +29,7 @@ class AccrualHolidaysFromDateDeparture(models.Model):
     def _get_date_possible(self):
         print("archiveddddddddd")
         self.possible_days = 0.0
-        total_remaining_leaves = 0.0
+        # total_remaining_leaves = 0.0
         for employee in self:
             print("archive", employee.departure_date)
             # employee.possible_days = 0
@@ -42,8 +42,9 @@ class AccrualHolidaysFromDateDeparture(models.Model):
                 print("allocation is ", all_allocations)
                 _logger.info("  all allocations  in calc +++++++++++++")
                 _logger.info(all_allocations)
+                employee.possible_days = 0.0
                 for allocation in all_allocations:
-                    employee.possible_days = 0.0
+                    
                     if allocation.holiday_status_id:
                         # aco_hr_leave = allocation.holiday_status_id.Forecast_Future_Allocation
                         # print('b6e511115 111..', allocation.holiday_status_id.Forecast_Future_Allocation)
@@ -71,7 +72,7 @@ class AccrualHolidaysFromDateDeparture(models.Model):
                             #     [('employee_id', '=', allocation.employee_id.id),
                             #      ('allocation_type', '=', 'accrual')])
                             print("lllllllllll", leave_days)
-                            total_remaining_leaves += leave_days['virtual_remaining_leaves']
+                            # total_remaining_leaves += leave_days['virtual_remaining_leaves']
                             m = allocation.get_total_days(employee.departure_date)
                             print("mmmmmmmmmmmm", m)
                             _logger.info("  mmmmmmm in calc +++++++++++++")
