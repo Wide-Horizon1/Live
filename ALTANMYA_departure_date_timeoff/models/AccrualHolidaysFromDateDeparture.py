@@ -80,7 +80,7 @@ class AccrualHolidaysFromDateDeparture(models.Model):
                             _logger.info("  virtual_remaining_leaves in calc +++++++++++++")
                             _logger.info(leave_days['virtual_remaining_leaves'])
 
-                            employee.possible_days = m + total_remaining_leaves
+                            employee.possible_days = m + leave_days['virtual_remaining_leaves']
                             print('self.possible_days..', employee.possible_days)
                             print("leave_days['virtual_remaining_leaves']", leave_days['virtual_remaining_leaves'])
                             print('mvvv.m..', m)
