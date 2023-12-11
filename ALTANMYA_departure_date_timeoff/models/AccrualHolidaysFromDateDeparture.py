@@ -39,6 +39,8 @@ class AccrualHolidaysFromDateDeparture(models.Model):
                     [('employee_id', '=', employee.id), ('active', 'in', [False, True]), ('state', '=', 'validate'),
                      ('allocation_type', '=', 'accrual')])
                 print("allocation is ", all_allocations)
+                _logger.info("  all allocations  in calc +++++++++++++")
+                _logger.info(all_allocations)
                 for allocation in all_allocations:
                     if allocation.holiday_status_id:
                         employee.possible_days = 0.0
