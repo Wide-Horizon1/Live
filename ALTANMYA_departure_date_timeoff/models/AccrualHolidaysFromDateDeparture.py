@@ -42,7 +42,7 @@ class AccrualHolidaysFromDateDeparture(models.Model):
                 _logger.info("  all allocations  in calc +++++++++++++")
                 _logger.info(all_allocations)
                 for allocation in all_allocations:
-                     employee.possible_days = 0.0
+                    employee.possible_days = 0.0
                     if allocation.holiday_status_id:
                         # aco_hr_leave = allocation.holiday_status_id.Forecast_Future_Allocation
                         # print('b6e511115 111..', allocation.holiday_status_id.Forecast_Future_Allocation)
