@@ -29,19 +29,29 @@ class HrLeaveTypeInherit(models.Model):
         for rec in self:
             print("iiiiiiiiiiiiiiiii")
             if rec.request_status == 'approved':
-                leave_ids = self.env['hr.leave'].search([('id', '=', rec.parent_id.id)])
-                leave_ids.action_draft()
-                leave_ids.action_confirm()
-                leave_ids.action_approve()
-                print("rrrrrrrrrrrrrrrrrrrrrrrrrr")
+                if rec.state_of_req_approval != 'approved':
+                    leave_ids = self.env['hr.leave'].search([('id', '=', rec.parent_id.id)])
+                    leave_ids.action_draft()
+                    leave_ids.action_confirm()
+                    leave_ids.action_approve()
+                    print("rrrrrrrrrrrrrrrrrrrrrrrrrr")
+
 
     def action_refuse(self, approver=None):
-        super(HrLeaveTypeInherit, self).action_refuse()
+        res=super(HrLeaveTypeInherit, self).action_refuse()
+        print("suppper " , res)
         for rec in self:
+            print("ارئة ", rec)
+            print("ارئة 222  ", rec.refuse_butt)
             leave_ids = self.env['hr.leave'].search([('id', '=', rec.parent_id.id)])
+            print("leave id ", leave_ids)
+            refused_toicket = self.env['approval.request'].search([('refuse_butt', '=', True), ('parent_id', '=',leave_ids.id)])
+            print("ارئ11111ة ", refused_toicket)
             leave_ids.action_draft()
             leave_ids.action_confirm()
             leave_ids.action_refuse()
+            refused_toicket.write({'request_status': 'refused'})
+            # refused_toicket.action_refuse()
 
     def action_withdraw(self, approver=None):
         for rec in self:
