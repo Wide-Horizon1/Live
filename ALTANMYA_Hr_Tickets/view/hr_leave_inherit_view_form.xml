@@ -7,6 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='name']" position="after">
                 <field name="check_true_for_ticket" invisible="1"/>
+                <field name="employee_id_" invisible="0"/>
                 <field name="ticket_allowance_" attrs="{'invisible': [('check_true_for_ticket', '=', False)], 'readonly': [('state', 'not in', ['draft', 'confirm'])]}"/>
                 <field name="number_of_ticket_allowance_"
                        attrs="{'invisible': [('check_true_for_ticket', '=', False)], 'readonly': ['|', ('ticket_allowance_', '=', False), '&amp;', ('ticket_allowance_', '=', True), ('state', 'not in', ['draft', 'confirm'])]}"/>

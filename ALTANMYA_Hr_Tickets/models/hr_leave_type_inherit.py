@@ -14,8 +14,16 @@ class HrLeaveInherit(models.Model):
     _inherit = "hr.leave"
 
     ticket_allowance_ = fields.Boolean(string='Request for tickets')
+    employee_id_ = fields.Many2one('hr.employee', string='Employee', default=lambda self: self.env.user.employee_id.id)
+
     number_of_ticket_allowance_ = fields.Integer(string='Number of tickets')
     check_true_for_ticket = fields.Boolean(string='Request for tickets', compute='check_if_true_ticket')
+    req_date = fields.Datetime(string='Date')
+    state_of_req = fields.Selection([
+        ('notapproved', 'not Approved'),
+        ('approved', 'Done'),
+    ], default='notapproved')
+    parent_id = fields.Many2one('approval.request', string='Parent')
 
     @api.depends('holiday_status_id')
     def check_if_true_ticket(self):
@@ -45,6 +53,7 @@ class HrLeaveInherit(models.Model):
                     'You cannot request tickets exceeding the number of tickets specified in your contract. '
                     'The number of tickets in your contract is (%s)' % employee.number_of_tickets_start_end
                 ))
+
             if not employee.country_id:
                 raise ValidationError(
                     _('Please specify your nationality first!'))
@@ -61,20 +70,42 @@ class HrLeaveInherit(models.Model):
         return res
 
     def action_approve(self):
-        res = super(HrLeaveInherit, self).action_approve()
-        employee_id = self.employee_id
-        number_of_tickets_requested = self.number_of_ticket_allowance_ or 0
-        approval_cat = self.env['approval.category'].search([('id', '=', self.holiday_status_id.approval_type.id)])
-        name = self.env['hr.leave.type'].browse(self.holiday_status_id.id)
-        if approval_cat:
-            approval_request = {
-                'number_of_tickets_': number_of_tickets_requested,
-                'category_id': approval_cat.id,
-                'request_owner_id': self.env.user.id,
-                'name': name.name,
-                'employee_id': employee_id.id
-            }
-            approval_request_vals = self.env['approval.request'].create(approval_request)
-            approval_request_vals.action_confirm()
+        super(HrLeaveInherit, self).action_approve()
+        # for rec in res:
+        #     print("reeeeeeeeeeeeeees cat is ", rec.employee_id_)
 
-        return res
+        print("caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa cat is ", self.employee_id_)
+        employees = self.env['hr.employee'].search([('id', '=', self.employee_id.id)])
+        for rec in self:
+            employee_id = rec.employee_id
+            number_of_tickets_requested = rec.number_of_ticket_allowance_ or 0
+            approval_cat = rec.env['approval.category'].search([('id', '=', rec.holiday_status_id.approval_type.id)])
+            name = rec.env['hr.leave.type'].browse(self.holiday_status_id.id)
+            print("approval cat is ", approval_cat.name, rec.state_of_req, employee_id, self.employee_id_)
+            rec.req_date = datetime.now()
+            if approval_cat and rec.ticket_allowance_ :
+                print("action approve from leave ##############", rec.check_true_for_ticket)
+                approval_request = {
+                    'number_of_tickets_': number_of_tickets_requested,
+                    'category_id': approval_cat.id,
+                    'request_owner_id': rec.env.user.id,
+                    'name': name.name,
+                    'employee_id': employee_id.id,
+                    'check_from_leave': rec.check_true_for_ticket,
+                    'req_date': rec.req_date,
+                    'state_of_req_approval': 'approved',
+                    'parent_id': rec.id,
+                    'refuse_butt': True
+                }
+                approval_request_vals = rec.env['approval.request'].create(approval_request)
+                approval_request_vals.action_confirm()
+                print('approval request1111111111', approval_request_vals)
+
+    # def action_refuse(self):
+    #     super(HrLeaveInherit, self).action_refuse()
+    #
+    #     for rec in self:
+    #         approval_request = rec.env['approval.request'].search(
+    #             [('parent_id', '=', rec.id), ('state_of_req_approval', '=', 'approved'), ('refuse_butt', '=', True)], limit=1)
+    #         if approval_request:
+    #             approval_request.action_refuse()
