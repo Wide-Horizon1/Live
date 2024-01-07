@@ -16,7 +16,7 @@ class HrPayslip(models.Model):
     house_wage=fields.Float(compute='_compute_net')
     allowances=fields.Float(compute='_compute_net')
     deductions =fields.Float(compute='_compute_net')
-    mobile_allowance =fields.Float(compute='_compute_net',default=0.0)
+    mobile_allowance =fields.Float(compute='_compute_net')
     transportation_allowance =fields.Float(compute='_compute_net',default=0.0)
     food_allowance =fields.Float(compute='_compute_net',default=0.0)
     nature_of_work=fields.Float(compute='_compute_net',default=0.0)
@@ -98,6 +98,7 @@ class HrPayslip(models.Model):
     @api.depends('name')
     def _compute_net(self):
         self.basic_sal = 0.0
+        self.mobile_allowance = 0.0
         _LOGGER.info("basiccccccccccccc haerererereerrererererer neeeet :")
         category_mapping = {
             'Allowance': 'allowances',
