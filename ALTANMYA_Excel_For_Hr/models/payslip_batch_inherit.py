@@ -109,6 +109,23 @@ class HrPayslip(models.Model):
             self.basic_sal= 0.0
             self.mobile_allowance = 0.0
             self.transportation_allowance = 0.0
+            self.food_allowance = 0.0
+            self.nature_of_work = 0.0
+            self.other_allowances = 0.0
+            self.rewards = 0.0
+            self.retrived = 0.0
+            self.total_allowances = 0.0
+            self.busniess_trip = 0.0
+            self.additional_constant = 0.0
+            self.over_value = 0.0
+            self.over_days = 0.0
+            self.over_hours = 0.0
+            self.insurance_discount = 0.0
+            self.training_discount = 0.0
+            self.traffic_fine_deduction = 0.0
+            self.aramco_lost = 0.0
+            self.advance_discount = 0.0
+            self.penalty_deduction = 0.0
 
 
             for line in rec.worked_days_line_ids:
