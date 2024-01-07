@@ -24,7 +24,7 @@ class HrPayslip(models.Model):
     other_allowances =fields.Float(compute='_compute_net',default=0.0)
     busniess_trip =fields.Float(compute='_compute_net',default=0.0)
     worked_days= fields.Float(string = "worked days" , compute='_compute_days',default=0.0)
-    basic_sal = fields.Float(string = "Baseic days" , compute='_compute_net',default=0.0)
+    basic_sal = fields.Float(string = "Baseic days" , compute='_compute_net')
     rewards = fields.Float(string = "Rewards " , compute='_compute_net',default=0.0)
     retrived = fields.Float(string = "Retrived " , compute='_compute_net',default=0.0)
     day_value = fields.Float(string = "Day value ",default=0.0)
