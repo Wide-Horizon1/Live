@@ -25,6 +25,7 @@ class Createexcelwizard(models.TransientModel):
                 print("emplyeeeeeid <<<<<<<<<<<<<<<<",forpayslips)
                 _LOGGER.info('emplyeeeeeid <<<<<<<<<<<<<<<<', forpayslips)
                 _LOGGER.info(forpayslips)
+                _LOGGER.info('mobile allowance')
                 _LOGGER.info(rec.mobile_allowance)
                 
 
