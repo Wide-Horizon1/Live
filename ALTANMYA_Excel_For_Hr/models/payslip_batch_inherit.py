@@ -95,7 +95,7 @@ class HrPayslip(models.Model):
             _LOGGER.info(sum_days )
 
 
-    @api.depends('name')
+    @api.depends('basic_wage')
     def _compute_net(self):
         _LOGGER.info("basiccccccccccccc haerererereerrererererer neeeet :")
         category_mapping = {
