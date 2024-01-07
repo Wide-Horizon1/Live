@@ -97,7 +97,7 @@ class HrPayslip(models.Model):
 
     @api.depends('name')
     def _compute_net(self):
-        
+        self.basic_sal = 0.0
         _LOGGER.info("basiccccccccccccc haerererereerrererererer neeeet :")
         category_mapping = {
             'Allowance': 'allowances',
