@@ -126,6 +126,7 @@ class HrPayslip(models.Model):
     def _compute_net(self):
         self.basic_sal = 0.0
         self.mobile_allowance = 0.0
+        self.transportation_allowance = 0.0
         _LOGGER.info("basiccccccccccccc haerererereerrererererer neeeet :")
         category_mapping = {
             'Allowance': 'allowances',
