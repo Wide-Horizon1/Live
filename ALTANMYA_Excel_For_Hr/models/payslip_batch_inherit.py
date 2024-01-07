@@ -75,8 +75,9 @@ class HrPayslip(models.Model):
 
     @api.depends('name')
     def _compute_days(self):
+        
         print("i am here ")
-         category_mapping = {
+        category_mapping = {
             'Allowance': 'allowances',
             'Deduction': 'deductions',
             'House': 'house_wage',
@@ -98,8 +99,7 @@ class HrPayslip(models.Model):
             'TrafficFine': 'traffic_fine_deduction',
             'AramcoLost': 'aramco_lost',
             'Advance': 'advance_discount',
-            'Penalty': 'penalty_deduction',
-        }
+            'Penalty': 'penalty_deduction',}
         for rec in self:
             
             sum_days = 0.0
