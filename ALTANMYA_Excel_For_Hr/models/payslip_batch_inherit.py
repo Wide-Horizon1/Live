@@ -108,6 +108,7 @@ class HrPayslip(models.Model):
             _LOGGER.info(rec)
             self.basic_sal= 0.0
             self.mobile_allowance = 0.0
+            self.transportation_allowance = 0.0
 
 
             for line in rec.worked_days_line_ids:
