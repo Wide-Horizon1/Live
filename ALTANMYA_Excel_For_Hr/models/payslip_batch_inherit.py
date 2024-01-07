@@ -76,9 +76,34 @@ class HrPayslip(models.Model):
     @api.depends('name')
     def _compute_days(self):
         print("i am here ")
+         category_mapping = {
+            'Allowance': 'allowances',
+            'Deduction': 'deductions',
+            'House': 'house_wage',
+            'Transportation': 'transportation_allowance',
+            'Mobile': 'mobile_allowance',
+            'Food': 'food_allowance',
+            'Nature': 'nature_of_work',
+            'Other': 'other_allowances',
+            'Rewards':'rewards',
+            'Retrived': 'retrived',
+            'Totalallowances': 'total_allowances',
+            'BusinessTrip': 'busniess_trip',
+            'FixedOvertime': 'additional_constant',
+            'OVT1':'over_value',
+            'OVTD':'over_days',
+            'OVTH':'over_hours',
+            'Gosi': 'insurance_discount',
+            'Training': 'training_discount',
+            'TrafficFine': 'traffic_fine_deduction',
+            'AramcoLost': 'aramco_lost',
+            'Advance': 'advance_discount',
+            'Penalty': 'penalty_deduction',
+        }
         for rec in self:
             
             sum_days = 0.0
+            category_sums = {field: 0.0 for field in category_mapping.values()}
             _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
             _LOGGER.info(rec)
             self.basic_sal= 0.0
