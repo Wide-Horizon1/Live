@@ -123,48 +123,49 @@ class HrPayslip(models.Model):
             'Penalty': 'penalty_deduction',
         }
         _LOGGER.info("\ddddddddddddddddddddddddddddddd haerererereerrererererer :")
-        for payslip in self:
-            category_sums = {field: 0.0 for field in category_mapping.values()}
-            _LOGGER.info(" pay sip from haerererereerrererererer :",payslip)
-            _LOGGER.info(payslip)
+        _LOGGER.info(self)
+        # for payslip in self:
+        #     category_sums = {field: 0.0 for field in category_mapping.values()}
+        #     _LOGGER.info(" pay sip from haerererereerrererererer :",payslip)
+        #     _LOGGER.info(payslip)
 
-            for line in payslip.line_ids:
-                category_name = line.category_id.name
-                if category_name in category_mapping:
-                    field_name = category_mapping[category_name]
-                    category_sums[field_name] += line.total
+        #     for line in payslip.line_ids:
+        #         category_name = line.category_id.name
+        #         if category_name in category_mapping:
+        #             field_name = category_mapping[category_name]
+        #             category_sums[field_name] += line.total
 
-            for worked_days_line in payslip.worked_days_line_ids:
-                workdays_name = worked_days_line.work_entry_type_id.code
-                # print("work days is ", worked_days_line , workdays_name)
-                # # Perform custom calculations for the specific categories
-                if workdays_name == 'OVT1':
-                    print("2")
-                    category_sums['over_days'] += worked_days_line.number_of_days
-                    category_sums['over_hours'] += worked_days_line.number_of_hours
-                # elif workdays_name == 'OVTH':
-                #     print("3")
+        #     for worked_days_line in payslip.worked_days_line_ids:
+        #         workdays_name = worked_days_line.work_entry_type_id.code
+        #         # print("work days is ", worked_days_line , workdays_name)
+        #         # # Perform custom calculations for the specific categories
+        #         if workdays_name == 'OVT1':
+        #             print("2")
+        #             category_sums['over_days'] += worked_days_line.number_of_days
+        #             category_sums['over_hours'] += worked_days_line.number_of_hours
+        #         # elif workdays_name == 'OVTH':
+        #         #     print("3")
 
-                # if workdays_name == 'Attendance':
-                #     print("4")
-                #     category_sums['attendance'] += worked_days_line.number_of_days
+        #         # if workdays_name == 'Attendance':
+        #         #     print("4")
+        #         #     category_sums['attendance'] += worked_days_line.number_of_days
 
-            for field, value in category_sums.items():
-                # print("categories is ", category_sums)
-                setattr(payslip, field, value)
-            _LOGGER.info(payslip.basic_sal)   
-            if not payslip.basic_sal :
-                _LOGGER.info("payslip basiccc1111111111111111111111111c")
+        #     for field, value in category_sums.items():
+        #         # print("categories is ", category_sums)
+        #         setattr(payslip, field, value)
+        #     _LOGGER.info(payslip.basic_sal)   
+        #     if not payslip.basic_sal :
+        #         _LOGGER.info("payslip basiccc1111111111111111111111111c")
 
-                payslip.basic_sal = payslip.basic_wage
-                payslip.day_value = payslip.basic_sal / 30
-                payslip.hour_cost =( payslip.basic_sal / 30 ) /8
-                _LOGGER.info("payslip basicccc")
-                _LOGGER.info(payslip.basic_sal)   
+        #         payslip.basic_sal = payslip.basic_wage
+        #         payslip.day_value = payslip.basic_sal / 30
+        #         payslip.hour_cost =( payslip.basic_sal / 30 ) /8
+        #         _LOGGER.info("payslip basicccc")
+        #         _LOGGER.info(payslip.basic_sal)   
 
 
-            else:
-                payslip.basic_sal = 0.0
+        #     else:
+        #         payslip.basic_sal = 0.0
 
 
 
