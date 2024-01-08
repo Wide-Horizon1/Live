@@ -17,7 +17,7 @@ class HrPayslip(models.Model):
     allowances=fields.Float(compute='_compute_net')
     deductions =fields.Float(compute='_compute_net')
     mobile_allowance =fields.Float(compute='_compute_net',default=0.0)
-    transportation_allowance =fields.Float(compute='_compute_net')
+    transportation_allowance =fields.Float(compute='_compute_net',default=0.0)
     food_allowance =fields.Float(compute='_compute_net',default=0.0)
     nature_of_work=fields.Float(compute='_compute_net',default=0.0)
     total_allowances=fields.Float(compute='_compute_net',default=0.0)
@@ -75,58 +75,13 @@ class HrPayslip(models.Model):
 
     @api.depends('name')
     def _compute_days(self):
-        
         print("i am here ")
-        category_mapping = {
-            'Allowance': 'allowances',
-            'Deduction': 'deductions',
-            'House': 'house_wage',
-            'Transportation': 'transportation_allowance',
-            'Mobile': 'mobile_allowance',
-            'Food': 'food_allowance',
-            'Nature': 'nature_of_work',
-            'Other': 'other_allowances',
-            'Rewards':'rewards',
-            'Retrived': 'retrived',
-            'Totalallowances': 'total_allowances',
-            'BusinessTrip': 'busniess_trip',
-            'FixedOvertime': 'additional_constant',
-            'OVT1':'over_value',
-            'OVTD':'over_days',
-            'OVTH':'over_hours',
-            'Gosi': 'insurance_discount',
-            'Training': 'training_discount',
-            'TrafficFine': 'traffic_fine_deduction',
-            'AramcoLost': 'aramco_lost',
-            'Advance': 'advance_discount',
-            'Penalty': 'penalty_deduction',}
         for rec in self:
             
             sum_days = 0.0
-            category_sums = {field: 0.0 for field in category_mapping.values()}
             _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
             _LOGGER.info(rec)
-            self.basic_sal= 0.0
-            self.mobile_allowance = 0.0
-            self.transportation_allowance = 0.0
-            self.food_allowance = 0.0
-            self.nature_of_work = 0.0
-            self.other_allowances = 0.0
-            self.rewards = 0.0
-            self.retrived = 0.0
-            self.total_allowances = 0.0
-            self.busniess_trip = 0.0
-            self.additional_constant = 0.0
-            self.over_value = 0.0
-            self.over_days = 0.0
-            self.over_hours = 0.0
-            self.insurance_discount = 0.0
-            self.training_discount = 0.0
-            self.traffic_fine_deduction = 0.0
-            self.aramco_lost = 0.0
-            self.advance_discount = 0.0
-            self.penalty_deduction = 0.0
-
+            _LOGGER.info(self)
 
             for line in rec.worked_days_line_ids:
                 if line.work_entry_type_id.code == 'ATTEND' or line.work_entry_type_id.code == 'WORK100' :
@@ -142,9 +97,6 @@ class HrPayslip(models.Model):
 
     @api.depends('name')
     def _compute_net(self):
-        self.basic_sal = 0.0
-        self.mobile_allowance = 0.0
-        self.transportation_allowance = 0.0
         _LOGGER.info("basiccccccccccccc haerererereerrererererer neeeet :")
         category_mapping = {
             'Allowance': 'allowances',
@@ -171,7 +123,6 @@ class HrPayslip(models.Model):
             'Penalty': 'penalty_deduction',
         }
         _LOGGER.info("\ddddddddddddddddddddddddddddddd haerererereerrererererer :")
-        _LOGGER.info(self)
         for payslip in self:
             category_sums = {field: 0.0 for field in category_mapping.values()}
             _LOGGER.info(" pay sip from haerererereerrererererer :",payslip)
@@ -214,7 +165,6 @@ class HrPayslip(models.Model):
 
             else:
                 payslip.basic_sal = 0.0
-
 
 
 
