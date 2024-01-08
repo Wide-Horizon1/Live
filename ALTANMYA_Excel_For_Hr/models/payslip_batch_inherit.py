@@ -80,7 +80,7 @@ class HrPayslip(models.Model):
             
             sum_days = 0.0
             _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
-            _LOGGER.info(rec)
+            _LOGGER.info(rec.basic_sal)
             _LOGGER.info(self)
 
            
@@ -96,6 +96,7 @@ class HrPayslip(models.Model):
             _LOGGER.info("work day :::::::::::::::;")
             _LOGGER.info(sum_days)
             try:
+                
                 # Existing computation logic for basic_sal
                 if not rec.basic_sal:
                     # Your computation for basic_sal when it's not set
@@ -105,6 +106,7 @@ class HrPayslip(models.Model):
                 else:
                     rec.basic_sal = 0.0
             except Exception as e:
+                
                 _LOGGER.error(f"Error computing basic_sal: {e}")
                 # Log more information about the context to debug further
         
