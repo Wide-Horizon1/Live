@@ -83,24 +83,32 @@ class HrPayslip(models.Model):
             _LOGGER.info(rec)
             _LOGGER.info(self)
 
+           
+            for line in rec.worked_days_line_ids:
+                if line.work_entry_type_id.code == 'ATTEND' or line.work_entry_type_id.code == 'WORK100':
+                    print("hello")
+                    sum_days += line.number_of_days
+                    _LOGGER.info(sum_days)
+                    print("sum isss----- -", sum_days)
+            
+            rec.worked_days = sum_days
+            print("work day ", sum_days, rec.worked_days)
+            _LOGGER.info("work day :::::::::::::::;")
+            _LOGGER.info(sum_days)
             try:
-                
-                for line in rec.worked_days_line_ids:
-                    if line.work_entry_type_id.code == 'ATTEND' or line.work_entry_type_id.code == 'WORK100':
-                        print("hello")
-                        sum_days += line.number_of_days
-                        _LOGGER.info(sum_days)
-                        print("sum isss----- -", sum_days)
-                
-                rec.worked_days = sum_days
-                print("work day ", sum_days, rec.worked_days)
-                _LOGGER.info("work day :::::::::::::::;")
-                _LOGGER.info(sum_days)
-        
+                # Existing computation logic for basic_sal
+                if not payslip.basic_sal:
+                    # Your computation for basic_sal when it's not set
+                    # For example:
+                    payslip.basic_sal = payslip.basic_wage + payslip.allowances - payslip.deductions
+                    # Add other computation steps as needed
+                else:
+                    payslip.basic_sal = 0.0
             except Exception as e:
-                
-                _LOGGER.error(f"Error computing worked_days: {e}")
-
+                _LOGGER.error(f"Error computing basic_sal: {e}")
+                # Log more information about the context to debug further
+        
+          
 
     @api.depends('name')
     def _compute_net(self):
