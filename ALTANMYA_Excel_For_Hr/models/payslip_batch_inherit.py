@@ -77,13 +77,11 @@ class HrPayslip(models.Model):
     def _compute_days(self):
         print("i am here ")
         for rec in self:
-            
             sum_days = 0.0
             _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
-            _LOGGER.info(rec.basic_sal)
+            _LOGGER.info(rec['basic_sal'])
             _LOGGER.info(self)
-
-           
+            
             for line in rec.worked_days_line_ids:
                 if line.work_entry_type_id.code == 'ATTEND' or line.work_entry_type_id.code == 'WORK100':
                     print("hello")
@@ -96,19 +94,14 @@ class HrPayslip(models.Model):
             _LOGGER.info("work day :::::::::::::::;")
             _LOGGER.info(sum_days)
             try:
-                
                 # Existing computation logic for basic_sal
                 if not rec.basic_sal:
-                    # Your computation for basic_sal when it's not set
-                    # For example:
+                    
                     rec.basic_sal = rec.basic_wage + rec.allowances - rec.deductions
-                    # Add other computation steps as needed
                 else:
                     rec.basic_sal = 0.0
             except Exception as e:
-                
                 _LOGGER.error(f"Error computing basic_sal: {e}")
-                # Log more information about the context to debug further
         
           
 
@@ -116,6 +109,7 @@ class HrPayslip(models.Model):
     def _compute_net(self):
         _LOGGER.info("basiccccccccccccc haerererereerrererererer neeeet :")
         category_mapping = {
+            
             'Allowance': 'allowances',
             'Deduction': 'deductions',
             'House': 'house_wage',
@@ -141,6 +135,7 @@ class HrPayslip(models.Model):
         }
         _LOGGER.info("\ddddddddddddddddddddddddddddddd haerererereerrererererer :")
         for payslip in self:
+            
             category_sums = {field: 0.0 for field in category_mapping.values()}
             _LOGGER.info(" pay sip from haerererereerrererererer :",payslip)
             _LOGGER.info(payslip)
@@ -185,7 +180,6 @@ class HrPayslip(models.Model):
                 else:
                     payslip.basic_sal = 0.0
             except Exception as e:
-                
                 _LOGGER.error(f"Error computing basic_sal: {e}")
 
 
