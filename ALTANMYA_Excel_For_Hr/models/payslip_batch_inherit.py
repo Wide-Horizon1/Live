@@ -153,18 +153,23 @@ class HrPayslip(models.Model):
                 # print("categories is ", category_sums)
                 setattr(payslip, field, value)
             _LOGGER.info(payslip.basic_sal)   
-            if not payslip.basic_sal :
-                _LOGGER.info("payslip basiccc1111111111111111111111111c")
+            try:
+                
+                if not payslip.basic_sal :
+                    _LOGGER.info("payslip basiccc1111111111111111111111111c")
+    
+                    payslip.basic_sal = payslip.basic_wage
+                    payslip.day_value = payslip.basic_sal / 30
+                    payslip.hour_cost =( payslip.basic_sal / 30 ) /8
+                    _LOGGER.info("payslip basicccc")
+                    _LOGGER.info(payslip.basic_sal)   
 
-                payslip.basic_sal = payslip.basic_wage
-                payslip.day_value = payslip.basic_sal / 30
-                payslip.hour_cost =( payslip.basic_sal / 30 ) /8
-                _LOGGER.info("payslip basicccc")
-                _LOGGER.info(payslip.basic_sal)   
 
-
-            else:
-                payslip.basic_sal = 0.0
+                else:
+                    payslip.basic_sal = 0.0
+            except Exception as e:
+                
+                _LOGGER.error(f"Error computing basic_sal: {e}")
 
 
 
