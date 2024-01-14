@@ -78,6 +78,7 @@ class HrPayslip(models.Model):
         print("i am here ")
         for rec in self:
             
+            
             sum_days = 0.0
             _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
             _LOGGER.info(rec)
@@ -93,7 +94,7 @@ class HrPayslip(models.Model):
             print("work day ",sum_days, rec.worked_days )
             _LOGGER.info("work day :::::::::::::::;" )
             _LOGGER.info(sum_days )
-              category_mapping = {
+            category_mapping = {
             'Allowance': 'allowances',
             'Deduction': 'deductions',
             'House': 'house_wage',
@@ -117,10 +118,10 @@ class HrPayslip(models.Model):
             'Advance': 'advance_discount',
             'Penalty': 'penalty_deduction',
         }
-        category_sums = {field: 0.0 for field in category_mapping.values()}
-        field_name = category_mapping[category_name]
-         category_sums[field_name] += 0
-        _LOGGER.info("category_sums haerererereerrererererer compute :",category_sums)
+            category_sums = {field: 0.0 for field in category_mapping.values()}
+            field_name = category_mapping[category_name]
+             category_sums[field_name] += 0
+            _LOGGER.info("category_sums haerererereerrererererer compute :",category_sums)
 
 
 
