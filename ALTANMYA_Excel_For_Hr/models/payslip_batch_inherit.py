@@ -44,6 +44,75 @@ class HrPayslip(models.Model):
     total_deduction = fields.Float(string="Total deduction")
 
 
+    @api.model
+    def create(self, vals):
+        payslipsss = super(HrPayslip, self).create(vals)
+        print("exceeeeeeeeeeeeeeeeeeeeeeel")
+        for payslipp in payslipsss:
+            category_mapping = {
+                'Allowance': 'allowances',
+                'Deduction': 'deductions',
+                'House': 'house_wage',
+                'Transportation': 'transportation_allowance',
+                'Mobile': 'mobile_allowance',
+                'Food': 'food_allowance',
+                'Nature': 'nature_of_work',
+                'Other': 'other_allowances',
+                'Rewards': 'rewards',
+                'Retrived': 'retrived',
+                'Totalallowances': 'total_allowances',
+                'BusinessTrip': 'busniess_trip',
+                'FixedOvertime': 'additional_constant',
+                'OVT1': 'over_value',
+                'OVTD': 'over_days',
+                'OVTH': 'over_hours',
+                'Gosi': 'insurance_discount',
+                'Training': 'training_discount',
+                'TrafficFine': 'traffic_fine_deduction',
+                'AramcoLost': 'aramco_lost',
+                'Advance': 'advance_discount',
+                'Penalty': 'penalty_deduction',
+            }
+            _LOGGER.info("\ddddddddddddddddddddddddddddddd haerererereerrererererer :")
+            category_sums = {field: 0.0 for field in category_mapping.values()}
+            print("Cat sum are paaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ", category_sums)
+            print("paaaaaaaaaaay is ", payslipp)
+            for line in payslipp.line_ids:
+                print("lineeeeeeeeeeeeee", line)
+                category_name = line.category_id.name
+                if category_name in category_mapping:
+                    field_name = category_mapping[category_name]
+                    category_sums[field_name] += line.total
+
+            for worked_days_line in payslipp.worked_days_line_ids:
+                workdays_name = worked_days_line.work_entry_type_id.code
+                # print("work days is ", worked_days_line , workdays_name)
+                # # Perform custom calculations for the specific categories
+                if workdays_name == 'OVT1':
+                    print("2")
+                    category_sums['over_days'] += worked_days_line.number_of_days
+                    category_sums['over_hours'] += worked_days_line.number_of_hours
+                # elif workdays_name == 'OVTH':
+                #     print("3")
+
+                # if workdays_name == 'Attendance':
+                #     print("4")
+                #     category_sums['attendance'] += worked_days_line.number_of_days
+
+            for field, value in category_sums.items():
+                # print("categories is ", category_sums)
+                setattr(payslipp, field, value)
+
+            if payslipp.basic_sal:
+
+                payslipp.basic_sal = payslipp.basic_wage
+                payslipp.day_value = payslipp.basic_sal / 30
+                payslipp.hour_cost = (payslipp.basic_sal / 30) / 8
+            else:
+                payslipp.basic_sal = 0.0
+
+
+
 
     def prepare_excel_data(self):
         data = {
