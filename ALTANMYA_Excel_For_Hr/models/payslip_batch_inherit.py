@@ -73,7 +73,7 @@ class HrPayslip(models.Model):
 
 
 
-    @api.depends('name')
+    @api.depends('employee_id')
     def _compute_days(self):
         print("i am here ")
         for rec in self:
@@ -93,9 +93,38 @@ class HrPayslip(models.Model):
             print("work day ",sum_days, rec.worked_days )
             _LOGGER.info("work day :::::::::::::::;" )
             _LOGGER.info(sum_days )
+              category_mapping = {
+            'Allowance': 'allowances',
+            'Deduction': 'deductions',
+            'House': 'house_wage',
+            'Transportation': 'transportation_allowance',
+            'Mobile': 'mobile_allowance',
+            'Food': 'food_allowance',
+            'Nature': 'nature_of_work',
+            'Other': 'other_allowances',
+            'Rewards':'rewards',
+            'Retrived': 'retrived',
+            'Totalallowances': 'total_allowances',
+            'BusinessTrip': 'busniess_trip',
+            'FixedOvertime': 'additional_constant',
+            'OVT1':'over_value',
+            'OVTD':'over_days',
+            'OVTH':'over_hours',
+            'Gosi': 'insurance_discount',
+            'Training': 'training_discount',
+            'TrafficFine': 'traffic_fine_deduction',
+            'AramcoLost': 'aramco_lost',
+            'Advance': 'advance_discount',
+            'Penalty': 'penalty_deduction',
+        }
+        category_sums = {field: 0.0 for field in category_mapping.values()}
+        field_name = category_mapping[category_name]
+         category_sums[field_name] += 0
+        _LOGGER.info("category_sums haerererereerrererererer compute :",category_sums)
 
 
-    @api.depends('name')
+
+    @api.depends('employee_id')
     def _compute_net(self):
         _LOGGER.info("basiccccccccccccc haerererereerrererererer neeeet :")
         category_mapping = {
