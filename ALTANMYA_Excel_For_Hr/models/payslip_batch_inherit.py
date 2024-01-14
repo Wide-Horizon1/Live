@@ -118,10 +118,10 @@ class HrPayslip(models.Model):
             'Advance': 'advance_discount',
             'Penalty': 'penalty_deduction',
         }
-            category_sums = {field: 0.0 for field in category_mapping.values()}
-            field_name = category_mapping[category_name]
-            category_sums[field_name] += 0
-            _LOGGER.info("category_sums haerererereerrererererer compute :",category_sums)
+            rec.basic_sal = 0.0
+            rec.mobile_allowance = 0.0
+          
+            _LOGGER.info("category_sums haerererereerrererererer compute :")
 
 
 
