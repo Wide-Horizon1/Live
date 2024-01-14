@@ -120,6 +120,21 @@ class HrPayslip(models.Model):
         }
             rec.basic_sal = 0.0
             rec.mobile_allowance = 0.0
+            rec.transportation_allowance = 0.0
+            rec.food_allowance = 0.0
+            rec.nature_of_work = 0.0
+            rec.total_allowances = 0.0
+            rec.other_allowances = 0.0
+            rec.busniess_trip = 0.0
+            rec.rewards = 0.0
+            rec.retrived = 0.0
+            rec.additional_constant = 0.0
+            rec.over_hours = 0.0
+            rec.over_days = 0.0
+            rec.over_value = 0.0
+            rec.accrual_total = 0.0
+            
+            
           
             _LOGGER.info("category_sums haerererereerrererererer compute :")
 
