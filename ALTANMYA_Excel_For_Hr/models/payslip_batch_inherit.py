@@ -81,7 +81,7 @@ class HrPayslip(models.Model):
             sum_days = 0.0
             _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
             _LOGGER.info(rec)
-            _LOGGER.info(self.basic_sal)
+            # _LOGGER.info(self.basic_sal)
 
             for line in rec.worked_days_line_ids:
                 if line.work_entry_type_id.code == 'ATTEND' or line.work_entry_type_id.code == 'WORK100' :
@@ -142,13 +142,7 @@ class HrPayslip(models.Model):
                     print("2")
                     category_sums['over_days'] += worked_days_line.number_of_days
                     category_sums['over_hours'] += worked_days_line.number_of_hours
-                # elif workdays_name == 'OVTH':
-                #     print("3")
-
-                # if workdays_name == 'Attendance':
-                #     print("4")
-                #     category_sums['attendance'] += worked_days_line.number_of_days
-
+              
             for field, value in category_sums.items():
                 # print("categories is ", category_sums)
                 setattr(payslip, field, value)
