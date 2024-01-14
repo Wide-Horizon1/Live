@@ -119,7 +119,7 @@ class HrPayslip(models.Model):
                     
                     sum_days+=line.number_of_days
 
-                    _LOGGER.info(sum_days,)
+                    _LOGGER.info(sum_days,line.)
             rec.worked_days= sum_days
 
 
