@@ -120,7 +120,7 @@ class HrPayslip(models.Model):
         }
             category_sums = {field: 0.0 for field in category_mapping.values()}
             field_name = category_mapping[category_name]
-             category_sums[field_name] += 0
+            category_sums[field_name] += 0
             _LOGGER.info("category_sums haerererereerrererererer compute :",category_sums)
 
 
