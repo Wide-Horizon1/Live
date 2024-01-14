@@ -80,7 +80,7 @@ class HrPayslip(models.Model):
             
             sum_days = 0.0
             _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
-            _LOGGER.info(rec)
+            _LOGGER.info(rec.basic_sal)
             _LOGGER.info(self)
 
             for line in rec.worked_days_line_ids:
