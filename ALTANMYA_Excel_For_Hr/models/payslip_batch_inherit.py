@@ -44,9 +44,6 @@ class HrPayslip(models.Model):
     total_deduction = fields.Float(string="Total deduction")
 
 
-    
-
-
 
     def prepare_excel_data(self):
         data = {
@@ -80,38 +77,28 @@ class HrPayslip(models.Model):
     def _compute_days(self):
         print("i am here ")
         for rec in self:
+            
             sum_days = 0.0
             _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
+            _LOGGER.info(rec)
             _LOGGER.info(self)
-            
-            for line in rec['worked_days_line_ids']:
-                if line.work_entry_type_id.code == 'ATTEND' or line.work_entry_type_id.code == 'WORK100':
+
+            for line in rec.worked_days_line_ids:
+                if line.work_entry_type_id.code == 'ATTEND' or line.work_entry_type_id.code == 'WORK100' :
                     print("hello")
-                    sum_days += line.number_of_days
+                    sum_days+=line.number_of_days
                     _LOGGER.info(sum_days)
                     print("sum isss----- -", sum_days)
-            
-            rec.worked_days = sum_days
-            print("work day ", sum_days, rec.worked_days)
-            _LOGGER.info("work day :::::::::::::::;")
-            _LOGGER.info(sum_days)
-            try:
-                # Existing computation logic for basic_sal
-                if not rec.basic_sal:
-                    
-                    rec.basic_sal = rec.basic_wage + rec.allowances - rec.deductions
-                else:
-                    rec.basic_sal = 0.0
-            except Exception as e:
-                _LOGGER.error(f"Error computing basic_sal: {e}")
-        
-          
+            rec.worked_days= sum_days
+            print("work day ",sum_days, rec.worked_days )
+            _LOGGER.info("work day :::::::::::::::;" )
+            _LOGGER.info(sum_days )
+
 
     @api.depends('name')
     def _compute_net(self):
         _LOGGER.info("basiccccccccccccc haerererereerrererererer neeeet :")
         category_mapping = {
-            
             'Allowance': 'allowances',
             'Deduction': 'deductions',
             'House': 'house_wage',
@@ -137,7 +124,6 @@ class HrPayslip(models.Model):
         }
         _LOGGER.info("\ddddddddddddddddddddddddddddddd haerererereerrererererer :")
         for payslip in self:
-            
             category_sums = {field: 0.0 for field in category_mapping.values()}
             _LOGGER.info(" pay sip from haerererereerrererererer :",payslip)
             _LOGGER.info(payslip)
@@ -167,22 +153,19 @@ class HrPayslip(models.Model):
                 # print("categories is ", category_sums)
                 setattr(payslip, field, value)
             _LOGGER.info(payslip.basic_sal)   
-            try:
-                
-                if not payslip.basic_sal :
-                    _LOGGER.info("payslip basiccc1111111111111111111111111c")
-    
-                    payslip.basic_sal = payslip.basic_wage
-                    payslip.day_value = payslip.basic_sal / 30
-                    payslip.hour_cost =( payslip.basic_sal / 30 ) /8
-                    _LOGGER.info("payslip basicccc")
-                    _LOGGER.info(payslip.basic_sal)   
+            if not payslip.basic_sal :
+                _LOGGER.info("payslip basiccc1111111111111111111111111c")
+
+                payslip.basic_sal = payslip.basic_wage
+                payslip.day_value = payslip.basic_sal / 30
+                payslip.hour_cost =( payslip.basic_sal / 30 ) /8
+                _LOGGER.info("payslip basicccc")
+                _LOGGER.info(payslip.basic_sal)   
 
 
-                else:
-                    payslip.basic_sal = 0.0
-            except Exception as e:
-                _LOGGER.error(f"Error computing basic_sal: {e}")
+            else:
+                payslip.basic_sal = 0.0
+
 
 
 
