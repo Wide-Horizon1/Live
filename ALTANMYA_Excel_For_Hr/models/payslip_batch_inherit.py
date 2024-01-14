@@ -77,13 +77,10 @@ class HrPayslip(models.Model):
     def _compute_days(self):
         print("i am here ")
         for rec in self:
-            
-            
             sum_days = 0.0
             _LOGGER.info("basiccccccccccccc haerererereerrererererer compute :")
             _LOGGER.info(rec)
             # _LOGGER.info(self.basic_sal)
-
             for line in rec.worked_days_line_ids:
                 if line.work_entry_type_id.code == 'ATTEND' or line.work_entry_type_id.code == 'WORK100' :
                     print("hello")
@@ -140,8 +137,10 @@ class HrPayslip(models.Model):
 
 
 
-    @api.depends('employee_id')
+    @api.depends('worked_days')
     def _compute_net(self):
+        
+        
         _LOGGER.info("basiccccccccccccc haerererereerrererererer neeeet :")
         category_mapping = {
             'Allowance': 'allowances',
@@ -169,6 +168,7 @@ class HrPayslip(models.Model):
         }
         _LOGGER.info("\ddddddddddddddddddddddddddddddd haerererereerrererererer :")
         for payslip in self:
+            
             category_sums = {field: 0.0 for field in category_mapping.values()}
             _LOGGER.info(" pay sip from haerererereerrererererer :",payslip)
             _LOGGER.info(payslip)
