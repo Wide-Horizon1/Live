@@ -90,7 +90,13 @@ class EmployeesAttendanceReportWizard(models.TransientModel):
             if employee:
 
                 date = row[1]
-                dt = datetime.datetime(*xlrd.xldate.xldate_as_tuple(row[1], workbook.datemode))
+                if date is not None  :
+
+                    dt = datetime.datetime(*xlrd.xldate.xldate_as_tuple(row[1], workbook.datemode))
+                else:
+                    raise UserError(
+                        "Please Check Excel File \n Date Not Defined Or Does not contain the required format")
+
             else:
                 raise UserError("Please Check Excel File \n Employee Not Defined Or Does not contain the required format")
 
@@ -98,12 +104,16 @@ class EmployeesAttendanceReportWizard(models.TransientModel):
             start_hour = row[2]
             print('Type of start_hour:', type(row[2]))
             print('Value of start_hour:', row[2])
-            if isinstance(start_hour, float):
+            if start_hour is not None and isinstance(start_hour, float):
                 hour = int(start_hour * 24)
                 print('hour==>', hour)
                 minute = int((start_hour * 24 * 60) % 60)
                 print('minute==>', minute)
-                start_hour = datetime.time(hour=hour, minute=minute)
+                try:
+                    start_hour = datetime.time(hour=hour, minute=minute)
+                except ValueError:
+                    raise UserError(
+                        "Please Check Excel File \n Start Hour Not Defined Or Does Not Contain The Required Format")
             else:
                 raise UserError("Please Check Excel File \n Start Hour Not Defined Or Does not contain the required format")
                 start_hour = datetime.datetime.strptime(start_hour, '%I:%M:%S %p').time()
@@ -111,18 +121,22 @@ class EmployeesAttendanceReportWizard(models.TransientModel):
 
             end_hours = row[3]
 
-            if isinstance(end_hours, float):
+            if end_hours is not None and isinstance(end_hours, float):
                 hour = int(end_hours * 24)
                 print('hour==>', hour)
                 minute = int((end_hours * 24 * 60) % 60)
                 print('minute==>', minute)
-                end_hours = datetime.time(hour=hour, minute=minute)
+                try:
+                    end_hours = datetime.time(hour=hour, minute=minute)
+                except ValueError:
+                    raise UserError(
+                        "Please Check Excel File \n End Hour Not Defined Or Does Not Contain The Required Format")
             else:
                 raise UserError("Please Check Excel File \n End Hour Not Defined Or Does Not Contain The Required Format")
                 end_hours = datetime.datetime.strptime(end_hours, '%I:%M:%S %p').time()
             late = row[4]
-            print("laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaate =============",type(late))
-            if isinstance(late, float):
+            print("laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaate =============",type(late) , late)
+            if late is not None  and isinstance(late, float):
                 hour = int(late * 24)
                 print('hour==>', hour)
                 minute = int((late * 24 * 60) % 60)
@@ -131,13 +145,14 @@ class EmployeesAttendanceReportWizard(models.TransientModel):
                     late = datetime.time(hour=hour, minute=minute)
                 except ValueError:
                     raise UserError(
-                        "Please Check Excel File \n Late Not Defined Or Does Not Contain The Required Format")
+                        "Please Check Excel File \n Lateeeeee Not Defined Or Does Not Contain The Required Format")
             else:
                 raise UserError("Please Check Excel File \n Late Not Defined Or Does Not Contain The Required Format")
                 late = datetime.datetime.strptime(late, '%I:%M:%S %p').time()
 
             overtime = row[5]
-            if isinstance(overtime , float):
+            print("over time ------------------------------",overtime)
+            if overtime is not None and isinstance(overtime, float):
                 print('start_hour--->', start_hour.strftime('%H:%M'))
                 print('late--->', late.strftime('%H:%M'))
                 print('end_hours--->', end_hours.strftime('%H:%M'))
