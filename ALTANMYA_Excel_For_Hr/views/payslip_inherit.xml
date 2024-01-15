@@ -15,11 +15,11 @@
                 <field name="house_wage" invisible="1"/>
                 <field name="allowances" invisible="1"/>
                 <field name="deductions" invisible="1"/>
-                <field name="worked_days"/>
-                <field name="basic_sal" invisible="0"/>
-                <field name="mobile_allowance" invisible="0"/>
-                <field name="transportation_allowance" invisible="0"/>
-                <field name="food_allowance" invisible="0"/>
+                <field name="worked_days" invisible="0"/>
+                <field name="basic_sal" invisible="1"/>
+                <field name="mobile_allowance" invisible="1"/>
+                <field name="transportation_allowance" invisible="1"/>
+                <field name="food_allowance" invisible="1"/>
             </xpath>
 
         </field>
