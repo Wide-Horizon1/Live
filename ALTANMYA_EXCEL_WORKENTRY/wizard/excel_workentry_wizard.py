@@ -86,8 +86,15 @@ class EmployeesAttendanceReportWizard(models.TransientModel):
             row = sheet.row_values(row_index)
             # Extract the data from each column based on the column names
             employee = row[0]
-            date = row[1]
-            dt = datetime.datetime(*xlrd.xldate.xldate_as_tuple(row[1], workbook.datemode))
+            print("employe ===== ",employee )
+            if employee:
+
+                date = row[1]
+                dt = datetime.datetime(*xlrd.xldate.xldate_as_tuple(row[1], workbook.datemode))
+            else:
+                raise UserError("Please Check Excel File \n Employee Not Defined Or Does not contain the required format")
+
+
             start_hour = row[2]
             print('Type of start_hour:', type(row[2]))
             print('Value of start_hour:', row[2])
@@ -98,7 +105,9 @@ class EmployeesAttendanceReportWizard(models.TransientModel):
                 print('minute==>', minute)
                 start_hour = datetime.time(hour=hour, minute=minute)
             else:
+                raise UserError("Please Check Excel File \n Start Hour Not Defined Or Does not contain the required format")
                 start_hour = datetime.datetime.strptime(start_hour, '%I:%M:%S %p').time()
+
 
             end_hours = row[3]
 
@@ -109,6 +118,7 @@ class EmployeesAttendanceReportWizard(models.TransientModel):
                 print('minute==>', minute)
                 end_hours = datetime.time(hour=hour, minute=minute)
             else:
+                raise UserError("Please Check Excel File \n End Hour Not Defined Or Does Not Contain The Required Format")
                 end_hours = datetime.datetime.strptime(end_hours, '%I:%M:%S %p').time()
             late = row[4]
             if isinstance(late, float):
@@ -118,30 +128,33 @@ class EmployeesAttendanceReportWizard(models.TransientModel):
                 print('minute==>', minute)
                 late = datetime.time(hour=hour, minute=minute)
             else:
+                raise UserError("Please Check Excel File \n Late Not Defined Or Does Not Contain The Required Format")
                 late = datetime.datetime.strptime(late, '%I:%M:%S %p').time()
+
             overtime = row[5]
-            print('start_hour--->', start_hour.strftime('%H:%M'))
-            print('late--->', late.strftime('%H:%M'))
-            print('end_hours--->', end_hours.strftime('%H:%M'))
-            gcc = self.env['excel.data'].sudo().create({
-                # 'approval_request_id': approval_request.id,
-                'employee': employee,
-                'date': dt,
-                'start_hour': start_hour,
-                'end_hours': end_hours,
-                'late': late,
-                'overtime': overtime,
-                'apporvlelateee': 'True',
-                'apporvleovertime': 'True',
-            })
+            if isinstance(overtime , float):
+                print('start_hour--->', start_hour.strftime('%H:%M'))
+                print('late--->', late.strftime('%H:%M'))
+                print('end_hours--->', end_hours.strftime('%H:%M'))
+                gcc = self.env['excel.data'].sudo().create({
+                    # 'approval_request_id': approval_request.id,
+                    'employee': employee,
+                    'date': dt,
+                    'start_hour': start_hour,
+                    'end_hours': end_hours,
+                    'late': late,
+                    'overtime': overtime,
+                    'apporvlelateee': 'True',
+                    'apporvleovertime': 'True',
+                })
+            else:
+                raise UserError("Please Check Excel File \n Overtime Not Defined Or Does Not Contain The Required Format")
+
 
             # TODO: Create a work entry using the extracted data
 
-        # Print the data
         print('Row Data:', employee, date, start_hour, end_hours, late, overtime)
-        # *********************************************#
 
-        # Create work entries using the extracted data
 
 
 class ApprovalRequest(models.Model):
