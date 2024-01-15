@@ -121,12 +121,17 @@ class EmployeesAttendanceReportWizard(models.TransientModel):
                 raise UserError("Please Check Excel File \n End Hour Not Defined Or Does Not Contain The Required Format")
                 end_hours = datetime.datetime.strptime(end_hours, '%I:%M:%S %p').time()
             late = row[4]
+            print("laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaate =============",type(late))
             if isinstance(late, float):
                 hour = int(late * 24)
                 print('hour==>', hour)
                 minute = int((late * 24 * 60) % 60)
                 print('minute==>', minute)
-                late = datetime.time(hour=hour, minute=minute)
+                try:
+                    late = datetime.time(hour=hour, minute=minute)
+                except ValueError:
+                    raise UserError(
+                        "Please Check Excel File \n Late Not Defined Or Does Not Contain The Required Format")
             else:
                 raise UserError("Please Check Excel File \n Late Not Defined Or Does Not Contain The Required Format")
                 late = datetime.datetime.strptime(late, '%I:%M:%S %p').time()
