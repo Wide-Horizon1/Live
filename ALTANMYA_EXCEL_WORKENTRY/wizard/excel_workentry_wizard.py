@@ -90,7 +90,7 @@ class EmployeesAttendanceReportWizard(models.TransientModel):
             if employee:
 
                 date = row[1]
-                if date is not None  :
+                if date and date is not None  :
 
                     dt = datetime.datetime(*xlrd.xldate.xldate_as_tuple(row[1], workbook.datemode))
                 else:
