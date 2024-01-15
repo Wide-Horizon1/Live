@@ -116,8 +116,8 @@ class HrPayslip(models.Model):
             _LOGGER.info(self)
             for line in rec.worked_days_line_ids:
                 if line.work_entry_type_id.code == 'ATTEND' or line.work_entry_type_id.code == 'WORK100' :
-                    print("i am here ")
-                    # sum_days+=line.number_of_days
+                    # print("i am here ")
+                    sum_days+=line.number_of_days
 
             rec.worked_days= sum_days
 
