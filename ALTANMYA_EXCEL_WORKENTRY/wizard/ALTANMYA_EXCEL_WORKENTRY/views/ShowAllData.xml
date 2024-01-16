@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+
+
+       <record id="partner_details_excel_data_Show_details" model="ir.ui.view">
+        <field name="name">show.details.tree</field>
+        <field name="model">show.details</field>
+        <field name="arch" type="xml">
+            <tree string="Exce Data">
+                <field name="employee"/>
+                <field name="date"/>
+                <field name="start_hour"/>
+                <field name="end_hours"/>
+                <field name="late"/>
+                <field name="overtime"/>
+                <field name="apporvlelateee"/>
+                <field name="apporvleovertime"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="partner_details_excel_data_Show" model="ir.ui.view">
+        <field name="name">show.data.tree</field>
+        <field name="model">show.data</field>
+        <field name="arch" type="xml">
+            <tree string="Exce Data">
+                <field name="emploey_id"/>
+                <field name="name"/>
+                <field name="department"/>
+                <field name="working_days"/>
+                <field name="absence"/>
+                <field name="late"/>
+                <field name="overTime"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="partner_details_excel_data" model="ir.ui.view">
+        <field name="name">send.data.tree</field>
+        <field name="model">send.data</field>
+        <field name="arch" type="xml">
+            <tree string="Exce Data">
+                <header>
+                    <button name="approved" type="object" string="Approved" groups="base.group_system"/>
+                </header>
+                <field name="approval_request_id" invisible="1"/>
+                <field name="emploey_id"/>
+                <field name="name"/>
+                <field name="department"/>
+                <field name="working_days"/>
+                <field name="absence"/>
+                <field name="late"/>
+                <field name="overTime"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="all_data_approval" model="ir.ui.view">
+        <field name="name">approval.request</field>
+        <field name="model">approval.request</field>
+        <field name="inherit_id" ref="approvals.approval_request_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[3]" position="after">
+                <page string="All Data" name="show_all_excel">
+                    <field name="all_data_ids" widget="one2many_list">
+                        <tree>
+                            <field name="emploey_id" string="Employee"/>
+                            <field name="name" string="name"/>
+                            <field name="department" string="department"/>
+                            <field name="working_days" string="working_days"/>
+                            <field name="absence" string="absence"/>
+                            <field name="late" string="late"/>
+                            <field name="overTime" string="overTime"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="excel_approval" model="ir.ui.view">
+        <field name="name">approval.request</field>
+        <field name="model">approval.request</field>
+        <field name="inherit_id" ref="approvals.approval_request_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[3]" position="after">
+                <page string="Show Excel" name="show_excel">
+                    <field name="excel_data_ids" widget="one2many_list">
+                        <tree>
+                            <field name="employee" string="Employee"/>
+                            <field name="date" string="Date"/>
+                            <field name="start_hour" string="Start Hour"/>
+                            <field name="end_hours" string="End Hours"/>
+                            <field name="late" string="Late"/>
+                            <field name="overtime" string="Overtime"/>
+                            <field name="apporvlelateee" string="Approved"/>
+                            <field name="apporvleovertime" string="Approved"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_get_all_data" model="ir.actions.act_window">
+        <field name="name">excel data</field>
+        <field name="res_model">send.data</field>
+        <field name="view_mode">tree</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                create your first partner !
+            </p>
+        </field>
+    </record>
+
+
+    <record id="action_show_all_data" model="ir.actions.act_window">
+        <field name="name">show all data</field>
+        <field name="res_model">show.data</field>
+        <field name="view_mode">tree</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                create your first partner !
+            </p>
+        </field>
+    </record>
+
+
+     <record id="action_show_all_details" model="ir.actions.act_window">
+        <field name="name">show all details</field>
+        <field name="res_model">show.details</field>
+        <field name="view_mode">tree</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                create your first partner !
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="apploval_inh"
+              name='All Data'
+              parent="approvals.approvals_menu_root"
+              sequence='20'
+    />
+
+    <menuitem id="apploval_inh_1"
+              name='Get All Data'
+              action="action_All_Data"
+              parent="apploval_inh"
+              sequence='20'
+    />
+
+    <menuitem id="parent_Appro"
+              name='Show All Data'
+              action="action_show_all_data"
+              parent="apploval_inh"
+              sequence='30'
+    />
+    <menuitem id="all_details"
+              name='Show All Details'
+              action="action_show_all_details"
+              parent="apploval_inh"
+              sequence='40'
+    />
+
+
+</odoo>

@@ -90,15 +90,9 @@ class EmployeesAttendanceReportWizard(models.TransientModel):
             if employee:
 
                 date = row[1]
-                print("datee ===== ", date)
                 if date and date is not None:
-                    try:
 
-                        dt = datetime.datetime(*xlrd.xldate.xldate_as_tuple(row[1], workbook.datemode))
-                    except :
-                        raise UserError(
-                            f"Please Check Excel File \n Date Not Defined Or Does not contain the required format")
-                        print("datee ===== ", dt)
+                    dt = datetime.datetime(*xlrd.xldate.xldate_as_tuple(row[1], workbook.datemode))
                 else:
                     raise UserError(
                         "Please Check Excel File \n Date Not Defined Or Does not contain the required format")
